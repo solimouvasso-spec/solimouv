@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,8 +9,15 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
+const barlow = Barlow_Condensed({
+  variable: "--font-barlow",
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  style: ["normal"],
+});
+
 export const viewport: Viewport = {
-  themeColor: "#0D1B2A",
+  themeColor: "#3B1F7A",
   width: "device-width",
   initialScale: 1,
   minimumScale: 1,
@@ -23,14 +30,7 @@ export const metadata: Metadata = {
   },
   description:
     "Le festival du sport inclusif organisé par Up Sport! Paris. Venez découvrir des activités adaptées, rencontrer des associations et célébrer la diversité sportive.",
-  keywords: [
-    "sport inclusif",
-    "handicap",
-    "festival",
-    "Paris",
-    "Up Sport",
-    "Solimouv",
-  ],
+  keywords: ["sport inclusif", "handicap", "festival", "Paris", "Up Sport", "Solimouv"],
   authors: [{ name: "Up Sport! Paris" }],
   creator: "Up Sport! Paris",
   manifest: "/manifest.json",
@@ -44,19 +44,16 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     siteName: "Solimouv'",
     title: "Solimouv' — Festival du sport inclusif",
-    description:
-      "Le festival du sport inclusif organisé par Up Sport! Paris.",
+    description: "Le festival du sport inclusif organisé par Up Sport! Paris.",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={`${geist.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-navy text-white antialiased">
+    <html lang="fr" className={`${geist.variable} ${barlow.variable} h-full`}>
+      <body className="min-h-full flex flex-col bg-purple-deep text-white antialiased">
         <Navbar />
         <main id="main-content" tabIndex={-1} className="flex-1">
           {children}

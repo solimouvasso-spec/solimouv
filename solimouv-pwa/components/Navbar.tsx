@@ -5,15 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-const navLinks = [
-  { href: "/",           label: "Accueil" },
-  { href: "/programme",  label: "Programme" },
+const NAV_LINKS = [
+  { href: "/programme",    label: "Programme" },
   { href: "/associations", label: "Associations" },
-  { href: "/defis",      label: "Défis" },
-  { href: "/classement", label: "Classement" },
-  { href: "/quiz",       label: "Quiz" },
-  { href: "/don",        label: "Faire un don" },
-  { href: "/contact",    label: "Contact" },
+  { href: "/defis",        label: "Défis" },
+  { href: "/classement",   label: "Classement" },
+  { href: "/don",          label: "Don" },
+  { href: "/contact",      label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -21,15 +19,18 @@ export default function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setIsAdmin(!!data.session);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setIsAdmin(!!session);
-    });
+    supabase.auth.getSession().then(({ data }) => setIsAdmin(!!data.session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setIsAdmin(!!s));
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   async function handleLogout() {
@@ -40,88 +41,49 @@ export default function Navbar() {
   return (
     <header
       role="banner"
-      className="sticky top-0 z-50 bg-navy/95 backdrop-blur-sm border-b border-teal/20"
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-purple-dark/95 backdrop-blur-md shadow-xl shadow-black/30"
+          : "bg-purple-dark"
+      }`}
+      style={{ borderBottom: "1px solid rgba(245,200,0,.1)" }}
     >
       <nav
         aria-label="Navigation principale"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
       >
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold text-xl text-white shrink-0"
+            className="flex items-center gap-2.5 font-bold text-xl shrink-0 group"
             aria-label="Solimouv' — retour à l'accueil"
           >
-            <span className="text-teal text-2xl" aria-hidden="true">◆</span>
-            <span>
-              Soli<span className="text-accent">mouv</span>
-              <span className="text-teal">&apos;</span>
+            <span
+              className="display text-2xl text-gradient-yellow tracking-wider group-hover:animate-glow-yellow transition-all"
+              aria-hidden="true"
+            >
+              SOLI<span className="text-white">MOUV</span>
+              <span className="text-yellow" style={{ color: "#F5C800", WebkitTextFillColor: "#F5C800" }}>&apos;</span>
             </span>
           </Link>
 
-          {/* Passeport CTA — toujours visible */}
-          <div className="hidden sm:flex items-center gap-2">
-            <Link
-              href="/passeport"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                pathname === "/passeport"
-                  ? "bg-teal/20 text-teal"
-                  : "bg-teal/10 text-teal hover:bg-teal/20"
-              }`}
-              aria-label="Mon Soli'Passeport"
-              aria-current={pathname === "/passeport" ? "page" : undefined}
-            >
-              <span aria-hidden="true">🎟</span>
-              <span>Mon passeport</span>
-            </Link>
-            {isAdmin ? (
-              <div className="flex items-center gap-1">
-                <Link
-                  href="/admin"
-                  className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                    pathname === "/admin"
-                      ? "bg-accent/20 text-accent"
-                      : "text-accent hover:bg-accent/10"
-                  }`}
-                  aria-label="Administration"
-                  aria-current={pathname === "/admin" ? "page" : undefined}
-                >
-                  Admin
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="px-2 py-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors rounded-full hover:bg-white/5"
-                  aria-label="Se déconnecter"
-                >
-                  ⏻
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/auth"
-                className="px-3 py-1.5 rounded-full text-sm text-gray-500 hover:text-gray-300 transition-colors hover:bg-white/5"
-                aria-label="Connexion administration"
-              >
-                Admin
-              </Link>
-            )}
-          </div>
-
           {/* Desktop links */}
-          <ul className="hidden lg:flex items-center gap-1" role="list">
-            {navLinks.map(({ href, label }) => {
+          <ul className="hidden lg:flex items-center gap-0.5" role="list">
+            {NAV_LINKS.map(({ href, label }) => {
               const active = pathname === href;
               return (
                 <li key={href}>
                   <Link
                     href={href}
                     aria-current={active ? "page" : undefined}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-3.5 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide transition-all ${
                       active
-                        ? "bg-teal/20 text-teal"
-                        : "text-gray-300 hover:text-teal hover:bg-white/5"
+                        ? "text-yellow bg-yellow/10"
+                        : "text-white/70 hover:text-white hover:bg-white/5"
                     }`}
+                    style={active ? { color: "#F5C800" } : {}}
                   >
                     {label}
                   </Link>
@@ -130,26 +92,66 @@ export default function Navbar() {
             })}
           </ul>
 
-          {/* Mobile : Scanner rapide + menu */}
-          <div className="flex items-center gap-2 lg:hidden">
+          {/* Right actions */}
+          <div className="hidden lg:flex items-center gap-2">
+            {/* Passeport CTA */}
+            <Link
+              href="/passeport"
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide transition-all hover:scale-105 ${
+                pathname === "/passeport" ? "text-purple-dark" : "text-purple-dark"
+              }`}
+              style={{
+                background: pathname === "/passeport"
+                  ? "linear-gradient(135deg, #FFE066, #F5C800)"
+                  : "linear-gradient(135deg, #F5C800, #e6b800)",
+              }}
+              aria-label="Mon Soli'Passeport"
+              aria-current={pathname === "/passeport" ? "page" : undefined}
+            >
+              🎟 Passeport
+            </Link>
+
+            {/* Admin */}
+            {isAdmin ? (
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/admin"
+                  className="px-3 py-2 rounded-lg text-xs font-semibold uppercase text-white/50 hover:text-white/80 transition-colors"
+                  aria-current={pathname === "/admin" ? "page" : undefined}
+                >
+                  Admin
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-white/30 hover:text-white/60 transition-colors"
+                  aria-label="Se déconnecter"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/auth"
+                className="text-white/30 hover:text-white/50 text-xs uppercase tracking-wide transition-colors"
+                aria-label="Administration"
+              >
+                Admin
+              </Link>
+            )}
+          </div>
+
+          {/* Mobile : Scanner + burger */}
+          <div className="flex items-center gap-1 lg:hidden">
             <Link
               href="/scan"
-              className="p-2 rounded-md text-teal hover:bg-teal/10 transition-colors"
+              className="p-2 rounded-lg transition-colors"
+              style={{ color: "#F5C800" }}
               aria-label="Scanner un QR code"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3m0 0V1m0 2v2M3 9h2M1 3h2M3 19a2 2 0 002 2h3m0 0v2m0-2v-2M9 21h2M21 3h-3m0 0V1m0 2v2m3 4h-2m2 6h-2m-3 6v2m0-2v-2M19 21h-2M21 9a2 2 0 01-2-2V5m0 0H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V9"
-                />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m0 14v1M4 12h1m14 0h1M6.34 6.34l.707.707M16.95 16.95l.707.707M6.34 17.66l.707-.707M16.95 7.05l.707-.707" />
               </svg>
             </Link>
             <button
@@ -158,29 +160,13 @@ export default function Navbar() {
               aria-controls="mobile-menu"
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               onClick={() => setMenuOpen((v) => !v)}
-              className="p-2 rounded-md text-gray-300 hover:text-teal hover:bg-white/5 transition-colors"
+              className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-colors"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 {menuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -192,38 +178,31 @@ export default function Navbar() {
           <div
             id="mobile-menu"
             role="dialog"
-            aria-label="Menu de navigation mobile"
+            aria-label="Menu mobile"
+            className="pb-5 pt-2"
           >
-            {/* Passeport & Scan en haut */}
-            <div className="pb-2 pt-1 flex gap-2">
+            {/* CTAs mobile */}
+            <div className="flex gap-2 mb-3">
               <Link
                 href="/passeport"
                 onClick={() => setMenuOpen(false)}
-                className={`flex-1 text-center py-2.5 rounded-xl text-sm font-bold transition-colors ${
-                  pathname === "/passeport"
-                    ? "bg-teal text-navy"
-                    : "bg-teal/10 text-teal hover:bg-teal/20"
-                }`}
-                aria-current={pathname === "/passeport" ? "page" : undefined}
+                className="flex-1 text-center py-3 rounded-xl text-sm font-bold uppercase text-purple-dark transition-all"
+                style={{ background: "linear-gradient(135deg, #F5C800, #e6b800)" }}
               >
                 🎟 Mon passeport
               </Link>
               <Link
                 href="/scan"
                 onClick={() => setMenuOpen(false)}
-                className={`flex-1 text-center py-2.5 rounded-xl text-sm font-bold transition-colors ${
-                  pathname === "/scan"
-                    ? "bg-accent text-white"
-                    : "bg-accent/10 text-accent hover:bg-accent/20"
-                }`}
-                aria-current={pathname === "/scan" ? "page" : undefined}
+                className="flex-1 text-center py-3 rounded-xl text-sm font-bold uppercase text-purple-dark transition-all"
+                style={{ background: "linear-gradient(135deg, #00C9A7, #009980)" }}
               >
                 📷 Scanner
               </Link>
             </div>
 
-            <ul className="pb-4 space-y-1" role="list">
-              {navLinks.map(({ href, label }) => {
+            <ul className="space-y-0.5" role="list">
+              {NAV_LINKS.map(({ href, label }) => {
                 const active = pathname === href;
                 return (
                   <li key={href}>
@@ -231,17 +210,29 @@ export default function Navbar() {
                       href={href}
                       aria-current={active ? "page" : undefined}
                       onClick={() => setMenuOpen(false)}
-                      className={`block px-4 py-3 rounded-md text-sm font-medium transition-colors ${
+                      className={`block px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wide transition-colors ${
                         active
-                          ? "bg-teal/20 text-teal"
-                          : "text-gray-300 hover:text-teal hover:bg-white/5"
+                          ? "bg-yellow/10 text-yellow"
+                          : "text-white/70 hover:text-white hover:bg-white/5"
                       }`}
+                      style={active ? { color: "#F5C800" } : {}}
                     >
                       {label}
                     </Link>
                   </li>
                 );
               })}
+              {isAdmin && (
+                <li>
+                  <Link
+                    href="/admin"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-3 rounded-xl text-sm text-white/40 hover:text-white/60 transition-colors"
+                  >
+                    Administration
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         )}
