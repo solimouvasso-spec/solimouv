@@ -1,39 +1,51 @@
 import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Classement — Soli'Passeport",
-  description:
-    "Classement annuel des participants du Soli'Passeport Solimouv'. Les 3 premiers gagnent des récompenses exceptionnelles !",
+  description: "Classement annuel des participants du Soli'Passeport Solimouv'. Les 3 premiers gagnent des récompenses exceptionnelles !",
 };
 
-const REWARDS = [
+const PODIUM = [
   {
     rank: 1,
-    label: "1ère place",
     icon: "🥇",
+    label: "1ère place",
     reward: "Adhésion annuelle offerte + Certification Solimouv' + Goodies",
-    gradient: "from-yellow-400/20 to-yellow-400/5",
-    border: "border-yellow-400",
-    text: "text-yellow-400",
+    gradient: "from-yellow-400/20 via-yellow-400/10 to-transparent",
+    border: "border-gradient-gold",
+    text: "text-gradient-gold",
+    glow: "glow-gold",
+    height: "lg:pt-0",
+    order: "lg:order-2",
+    ring: "ring-2 ring-yellow-400/30",
   },
   {
     rank: 2,
-    label: "2ème place",
     icon: "🥈",
-    reward: "−50% sur l'adhésion annuelle + Certification Solimouv' + Goodies",
-    gradient: "from-gray-300/20 to-gray-300/5",
-    border: "border-gray-300",
+    label: "2ème place",
+    reward: "−50% sur l'adhésion + Certification Solimouv' + Goodies",
+    gradient: "from-gray-300/15 via-gray-300/8 to-transparent",
+    border: "border-gradient-silver",
     text: "text-gray-300",
+    glow: "",
+    height: "lg:pt-8",
+    order: "lg:order-1",
+    ring: "ring-1 ring-gray-400/20",
   },
   {
     rank: 3,
-    label: "3ème place",
     icon: "🥉",
-    reward: "−30% sur l'adhésion annuelle + Certification Solimouv' + Goodies",
-    gradient: "from-amber-600/20 to-amber-600/5",
-    border: "border-amber-600",
+    label: "3ème place",
+    reward: "−30% sur l'adhésion + Certification Solimouv' + Goodies",
+    gradient: "from-amber-600/15 via-amber-600/8 to-transparent",
+    border: "border-gradient-bronze",
     text: "text-amber-500",
+    glow: "",
+    height: "lg:pt-16",
+    order: "lg:order-3",
+    ring: "ring-1 ring-amber-600/20",
   },
 ];
 
@@ -50,114 +62,126 @@ export default async function ClassementPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      {/* En-tête */}
-      <header className="text-center mb-12">
-        <p className="text-teal text-sm font-semibold uppercase tracking-widest mb-3">
-          Saison 2025
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
-          Classement
+
+      {/* Header */}
+      <header className="text-center mb-14">
+        <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
+          <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" aria-hidden="true" />
+          <span className="text-yellow-400 text-xs font-semibold uppercase tracking-widest">Saison 2025</span>
+        </div>
+        <h1 className="text-5xl sm:text-6xl font-extrabold text-white mb-4">
+          <span className="text-gradient-gold">Class</span>ement
         </h1>
         <p className="text-gray-400 text-lg max-w-xl mx-auto">
           Les meilleurs Soli&apos;Athlètes de la saison. Points cumulés au
-          festival et sur les défis mensuels.
+          festival et sur les défis mensuels tout au long de l&apos;année.
         </p>
       </header>
 
       {/* Podium */}
       {top3.length > 0 ? (
-        <section aria-labelledby="podium-heading" className="mb-10">
-          <h2 id="podium-heading" className="sr-only">
-            Top 3 — Podium
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {top3.map((player, i) => {
-              const r = REWARDS[i];
+        <section aria-labelledby="podium-heading" className="mb-12">
+          <h2 id="podium-heading" className="sr-only">Top 3 — Podium</h2>
+
+          {/* Podium disposition : 2e | 1er | 3e */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+            {[1, 0, 2].map((dataIdx) => {
+              const player = top3[dataIdx];
+              const p = PODIUM[dataIdx];
+              if (!player) return (
+                <div key={p.rank} className={`${p.order} ${p.height}`}>
+                  <div className={`glass rounded-3xl p-6 text-center opacity-30 ${p.ring}`}>
+                    <span className="text-4xl block mb-2" aria-hidden="true">{p.icon}</span>
+                    <p className="text-gray-600 text-sm">{p.label}</p>
+                    <p className="text-gray-700 text-xs mt-1">Pas encore de participant</p>
+                  </div>
+                </div>
+              );
               return (
                 <article
-                  key={player.display_name}
-                  className={`bg-gradient-to-b ${r.gradient} border-2 ${r.border} rounded-2xl p-6 text-center`}
-                  aria-label={`${r.label} : ${player.display_name}`}
+                  key={p.rank}
+                  className={`${p.order} ${p.height} relative`}
+                  aria-label={`${p.label} : ${player.display_name}`}
                 >
-                  <span
-                    className="text-5xl block mb-3"
-                    role="img"
-                    aria-hidden="true"
+                  {/* Glow pour le 1er */}
+                  {p.rank === 1 && (
+                    <div
+                      className="absolute inset-0 rounded-3xl blur-2xl opacity-15 pointer-events-none"
+                      style={{ background: "radial-gradient(circle, #F59E0B, transparent)" }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <div
+                    className={`relative rounded-3xl p-6 text-center bg-gradient-to-b ${p.gradient} ${p.border} ${p.ring} overflow-hidden`}
                   >
-                    {r.icon}
-                  </span>
-                  <p className={`${r.text} text-xs font-semibold uppercase tracking-widest mb-2`}>
-                    {r.label}
-                  </p>
-                  <p className="text-white font-extrabold text-xl mb-1 truncate">
-                    {player.display_name}
-                  </p>
-                  <p
-                    className={`${r.text} text-3xl font-extrabold mb-1`}
-                    aria-label={`${player.total_points} points`}
-                  >
-                    {player.total_points}
-                  </p>
-                  <p className="text-gray-600 text-xs mb-4">points</p>
-                  <div className="text-xs text-gray-500 space-y-0.5 mb-4">
-                    <p>Festival : {player.festival_points} pts</p>
-                    <p>Défis : {player.challenge_points} pts</p>
+                    {p.rank === 1 && (
+                      <div
+                        className="absolute inset-0 opacity-5 pointer-events-none animate-spin-slow"
+                        style={{
+                          background: "conic-gradient(from 0deg, #F59E0B, #FCD34D, #F59E0B)",
+                          borderRadius: "inherit",
+                        }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span className="text-5xl block mb-3 relative animate-float" role="img" aria-hidden="true">
+                      {p.icon}
+                    </span>
+                    <p className={`${p.text} text-[10px] font-bold uppercase tracking-widest mb-2`}>{p.label}</p>
+                    <p className="text-white font-extrabold text-lg mb-1 truncate">{player.display_name}</p>
+                    <p className={`${p.text} text-3xl font-extrabold mb-1`} aria-label={`${player.total_points} points`}>
+                      {player.total_points}
+                    </p>
+                    <p className="text-gray-700 text-[10px] mb-4">points</p>
+                    <div className="glass-dark rounded-xl p-2.5 mb-3 text-xs text-gray-500 space-y-0.5">
+                      <p>🎪 Festival : <span className="text-gray-400">{player.festival_points} pts</span></p>
+                      <p>🎯 Défis : <span className="text-gray-400">{player.challenge_points} pts</span></p>
+                    </div>
+                    <p className={`text-[11px] ${p.text} opacity-80 leading-relaxed font-medium`}>{p.reward}</p>
                   </div>
-                  <p
-                    className={`text-xs ${r.text} opacity-80 leading-relaxed font-medium`}
-                  >
-                    {r.reward}
-                  </p>
                 </article>
               );
             })}
           </div>
         </section>
       ) : (
-        <section
-          className="text-center py-16 mb-10 bg-navy-light rounded-2xl border border-teal/10"
-          aria-label="Aucun participant encore"
-        >
-          <span className="text-6xl block mb-4" role="img" aria-label="Trophée">
-            🏆
-          </span>
-          <h2 className="text-xl font-bold text-white mb-2">
-            Le classement est vide pour l&apos;instant
-          </h2>
-          <p className="text-gray-500 max-w-sm mx-auto">
+        <section className="mb-12 text-center py-20 glass-card rounded-3xl border border-teal/10">
+          <span className="text-6xl block mb-5 animate-float" role="img">🏆</span>
+          <h2 className="text-2xl font-extrabold text-white mb-3">Le classement est vide</h2>
+          <p className="text-gray-500 max-w-sm mx-auto mb-6">
             Le classement s&apos;affichera dès que des participants auront
-            scanné des stands lors du festival !
+            scanné des stands lors du festival.
           </p>
+          <Link
+            href="/passeport"
+            className="inline-flex items-center px-6 py-3 rounded-full font-bold text-navy text-sm transition-all hover:scale-105"
+            style={{ background: "linear-gradient(135deg, #00C9A7, #009980)" }}
+          >
+            Créer mon passeport
+          </Link>
         </section>
       )}
 
       {/* 4ème – 10ème */}
       {rest.length > 0 && (
-        <section aria-labelledby="rest-heading" className="mb-10">
-          <h2 id="rest-heading" className="text-xl font-bold text-white mb-4">
+        <section aria-labelledby="rest-heading" className="mb-12">
+          <h2 id="rest-heading" className="text-xl font-extrabold text-white mb-4 flex items-center gap-2">
+            <span className="text-2xl" aria-hidden="true">🎖</span>
             4ème – 10ème
           </h2>
           <ul className="space-y-2" role="list">
             {rest.map((player, i) => (
               <li
                 key={player.display_name}
-                className="flex items-center justify-between bg-navy-light rounded-xl px-5 py-4 border border-teal/10"
-                aria-label={`${i + 4}ème : ${player.display_name}, ${player.total_points} points`}
+                className="group flex items-center justify-between glass rounded-2xl px-5 py-4 border border-teal/10 hover:border-teal/25 transition-all"
               >
                 <div className="flex items-center gap-4">
-                  <span
-                    className="text-gray-500 font-mono font-bold w-7 text-center text-sm"
-                    aria-hidden="true"
-                  >
-                    {i + 4}
-                  </span>
+                  <span className="text-gray-600 font-mono font-bold w-7 text-center text-sm">{i + 4}</span>
                   <p className="text-white font-semibold">{player.display_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-teal font-bold">
-                    {player.total_points} pts
-                  </p>
-                  <p className="text-gray-600 text-xs">Certification + Goodies</p>
+                  <p className="text-teal font-extrabold">{player.total_points} pts</p>
+                  <p className="text-gray-700 text-xs">Certification + Goodies</p>
                 </div>
               </li>
             ))}
@@ -166,63 +190,40 @@ export default async function ClassementPage() {
       )}
 
       {/* Tableau des récompenses */}
-      <section
-        aria-labelledby="rewards-heading"
-        className="bg-navy-light rounded-2xl p-6 sm:p-8 border border-teal/20"
-      >
-        <h2 id="rewards-heading" className="text-xl font-bold text-white mb-6">
+      <section aria-labelledby="rewards-heading" className="glass-card rounded-3xl p-6 sm:p-8 border border-teal/10">
+        <h2 id="rewards-heading" className="text-xl font-extrabold text-white mb-6 flex items-center gap-2">
+          <span aria-hidden="true">🎁</span>
           Récompenses de fin d&apos;année
         </h2>
         <ul className="space-y-4" role="list">
-          {REWARDS.map(({ rank, label, icon, reward, text }) => (
-            <li key={rank} className="flex items-start gap-4">
-              <span
-                className="text-2xl shrink-0"
-                role="img"
-                aria-label={label}
-              >
-                {icon}
-              </span>
+          {[
+            { icon: "🥇", label: "1ère place", text: "text-gradient-gold", desc: "Adhésion annuelle offerte + Certification Solimouv' + Goodies" },
+            { icon: "🥈", label: "2ème place", text: "text-gray-300",      desc: "−50% sur l'adhésion annuelle + Certification Solimouv' + Goodies" },
+            { icon: "🥉", label: "3ème place", text: "text-amber-500",     desc: "−30% sur l'adhésion annuelle + Certification Solimouv' + Goodies" },
+            { icon: "🎖", label: "4ème – 10ème", text: "text-gray-400",    desc: "Certification Solimouv' + Goodies" },
+          ].map(({ icon, label, text, desc }) => (
+            <li key={label} className="flex items-start gap-4 group">
+              <span className="text-2xl shrink-0 group-hover:scale-110 transition-transform" role="img" aria-label={label}>{icon}</span>
               <div>
-                <p className={`${text} font-semibold`}>{label}</p>
-                <p className="text-gray-400 text-sm leading-relaxed">{reward}</p>
+                <p className={`${text} font-bold`}>{label}</p>
+                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
               </div>
             </li>
           ))}
-          <li className="flex items-start gap-4">
-            <span className="text-2xl shrink-0" role="img" aria-label="4ème à 10ème">
-              🎖
-            </span>
-            <div>
-              <p className="text-white font-semibold">4ème – 10ème</p>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Certification Solimouv&apos; + Goodies
-              </p>
-            </div>
-          </li>
         </ul>
-
         <div className="mt-6 pt-6 border-t border-teal/10 text-center">
-          <p className="text-gray-500 text-sm">
-            Le classement final est calculé en décembre sur la totalité des
-            points accumulés durant le festival et les défis mensuels.
+          <p className="text-gray-600 text-sm mb-4">
+            Classement calculé en décembre sur la totalité des points accumulés.
           </p>
+          <Link
+            href="/passeport"
+            className="inline-flex items-center px-6 py-2.5 rounded-full font-bold text-navy text-sm transition-all hover:scale-105"
+            style={{ background: "linear-gradient(135deg, #00C9A7, #009980)" }}
+          >
+            🎟 Créer mon Soli&apos;Passeport
+          </Link>
         </div>
       </section>
-
-      {/* CTA */}
-      <div className="mt-10 text-center">
-        <p className="text-gray-400 mb-4">
-          Pas encore de passeport ? Commence à accumuler des points !
-        </p>
-        <a
-          href="/passeport"
-          className="inline-flex items-center justify-center px-8 py-3 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors"
-          aria-label="Créer mon Soli'Passeport"
-        >
-          Créer mon Soli&apos;Passeport 🎟
-        </a>
-      </div>
     </div>
   );
 }
