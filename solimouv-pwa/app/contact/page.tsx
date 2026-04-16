@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ContactForm from "./ContactForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -69,104 +70,11 @@ export default function ContactPage() {
         ))}
       </div>
 
-      {/* Formulaire de contact */}
       <section aria-labelledby="form-heading">
         <h2 id="form-heading" className="text-2xl font-bold text-white mb-6">
           Envoyer un message
         </h2>
-        <form
-          className="space-y-5"
-          aria-label="Formulaire de contact"
-          noValidate
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label
-                htmlFor="contact-name"
-                className="block text-sm font-medium text-gray-300 mb-1.5"
-              >
-                Nom complet <span aria-hidden="true" className="text-accent">*</span>
-              </label>
-              <input
-                id="contact-name"
-                type="text"
-                name="name"
-                required
-                autoComplete="name"
-                aria-required="true"
-                className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
-                placeholder="Marie Dupont"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="contact-email"
-                className="block text-sm font-medium text-gray-300 mb-1.5"
-              >
-                Email <span aria-hidden="true" className="text-accent">*</span>
-              </label>
-              <input
-                id="contact-email"
-                type="email"
-                name="email"
-                required
-                autoComplete="email"
-                aria-required="true"
-                className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
-                placeholder="marie@example.com"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="contact-subject"
-              className="block text-sm font-medium text-gray-300 mb-1.5"
-            >
-              Sujet
-            </label>
-            <select
-              id="contact-subject"
-              name="subject"
-              className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
-              aria-label="Sélectionner un sujet"
-            >
-              <option value="">Choisir un sujet...</option>
-              <option value="info">Information générale</option>
-              <option value="partnership">Partenariat</option>
-              <option value="volunteer">Bénévolat</option>
-              <option value="association">Inscription association</option>
-              <option value="press">Presse</option>
-              <option value="other">Autre</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="contact-message"
-              className="block text-sm font-medium text-gray-300 mb-1.5"
-            >
-              Message <span aria-hidden="true" className="text-accent">*</span>
-            </label>
-            <textarea
-              id="contact-message"
-              name="message"
-              required
-              rows={5}
-              aria-required="true"
-              className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors resize-none"
-              placeholder="Votre message..."
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full sm:w-auto px-8 py-4 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors"
-            aria-label="Envoyer le formulaire de contact"
-          >
-            Envoyer le message
-          </button>
-        </form>
+        <ContactForm />
       </section>
     </div>
   );
