@@ -1,0 +1,43 @@
+{
+  "name": "Solimouv' — Festival du sport inclusif",
+  "short_name": "Solimouv'",
+  "description": "L'application officielle du festival du sport inclusif organisé par Up Sport! Paris.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D1B2A",
+  "theme_color": "#0D1B2A",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["sports", "lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Programme",
+      "short_name": "Programme",
+      "description": "Voir le programme du festival",
+      "url": "/programme",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Trouver mon sport",
+      "short_name": "Mon sport",
+      "description": "Matching sportif adapté",
+      "url": "/match",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
