@@ -14,7 +14,30 @@ type ScanStatus =
   | "no_passport"
   | "error";
 
-// ─── Logique scan ─────────────────────────────────────────────────────────────
+function statusTitle(status: ScanStatus, stand?: FestivalStand | null) {
+  if (status === "success") return stand?.name ?? "Participation validee";
+  if (status === "already_scanned") return "Stand deja valide";
+  if (status === "no_passport") return "Cree ton pass d'abord";
+  if (status === "error") return "Impossible de valider";
+  return "Scanner un stand";
+}
+
+function statusCopy(status: ScanStatus, stand?: FestivalStand | null, errorMsg?: string) {
+  if (status === "success") {
+    return `Joue, participe et continue ton parcours sur ${stand?.sport ?? "le festival"}.`;
+  }
+  if (status === "already_scanned") {
+    return "Tu as deja valide ce stand. Chaque activite ne compte qu'une seule fois.";
+  }
+  if (status === "no_passport") {
+    return "Tu dois creer un Soli'Passeport avant de pouvoir cumuler des points.";
+  }
+  if (status === "error") {
+    return errorMsg || "Le scan n'a pas pu etre finalise. Reessaie ou utilise un autre QR code.";
+  }
+  return "Scanne le QR code affiche a chaque stand du festival pour valider ta participation et gagner des points.";
+}
+
 function ScanContent() {
   const searchParams = useSearchParams();
   const standCode = searchParams.get("stand");
@@ -37,7 +60,6 @@ function ScanContent() {
       return;
     }
 
-    // Trouver le stand
     const { data: stand } = await supabase
       .from("festival_stands")
       .select("*")
@@ -46,14 +68,13 @@ function ScanContent() {
       .single();
 
     if (!stand) {
-      setErrorMsg("Stand introuvable. Vérifie que tu scanned le bon QR code.");
+      setErrorMsg("Stand introuvable. Verifie que tu scannes le bon QR code.");
       setStatus("error");
       return;
     }
 
     setScannedStand(stand as FestivalStand);
 
-    // Vérifier doublon
     const { data: existing } = await supabase
       .from("passport_scans")
       .select("id")
@@ -66,7 +87,6 @@ function ScanContent() {
       return;
     }
 
-    // Enregistrer le scan
     const { error: scanErr } = await supabase.from("passport_scans").insert({
       session_id: sessionId,
       stand_id: stand.id,
@@ -74,24 +94,21 @@ function ScanContent() {
     });
 
     if (scanErr) {
-      // Contrainte unique = déjà scanné (race condition)
       if (scanErr.code === "23505") {
         setStatus("already_scanned");
         return;
       }
-      setErrorMsg("Erreur lors de l'enregistrement. Réessaie.");
+      setErrorMsg("Erreur lors de l'enregistrement. Reessaie.");
       setStatus("error");
       return;
     }
 
-    // Mettre à jour les points
     await addPassportPoints(sessionId, stand.points, 0);
 
     setPointsEarned(stand.points);
     setStatus("success");
   }, []);
 
-  // Si QR code dans l'URL (lien direct depuis un QR code physique)
   useEffect(() => {
     if (standCode && status === "idle") {
       const timeoutId = window.setTimeout(() => {
@@ -102,17 +119,16 @@ function ScanContent() {
     }
   }, [standCode, status, processCode]);
 
-  // Nettoyage caméra au démontage
   useEffect(() => {
     return () => {
       scanningRef.current = false;
-      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, []);
 
   function stopCamera() {
     scanningRef.current = false;
-    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     setStatus("idle");
   }
@@ -132,13 +148,12 @@ function ScanContent() {
         await videoRef.current.play();
       }
 
-      // BarcodeDetector (Chrome Android + Safari iOS 17+)
       if (!("BarcodeDetector" in window)) {
         setErrorMsg(
-          "Ton navigateur ne supporte pas le scan natif. Utilise directement la caméra de ton téléphone pour scanner le QR code du stand — il s'ouvrira automatiquement."
+          "Ton navigateur ne supporte pas le scan natif. Utilise directement la camera de ton telephone pour scanner le QR code du stand."
         );
         setStatus("error");
-        stream.getTracks().forEach((t) => t.stop());
+        stream.getTracks().forEach((track) => track.stop());
         return;
       }
 
@@ -151,28 +166,27 @@ function ScanContent() {
 
       const tick = async () => {
         if (!scanningRef.current || !videoRef.current) return;
+
         try {
           const barcodes = await detector.detect(videoRef.current);
           if (barcodes.length > 0) {
             scanningRef.current = false;
-            stream.getTracks().forEach((t) => t.stop());
+            stream.getTracks().forEach((track) => track.stop());
             const raw: string = barcodes[0].rawValue;
-            // Extraire le paramètre ?stand= si c'est une URL complète
             const match = raw.match(/[?&]stand=([^&]+)/);
-            processCode(match ? decodeURIComponent(match[1]) : raw);
-          } else {
-            requestAnimationFrame(tick);
+            void processCode(match ? decodeURIComponent(match[1]) : raw);
+            return;
           }
         } catch {
-          requestAnimationFrame(tick);
+          // Keep looping until a QR code is found.
         }
+
+        requestAnimationFrame(tick);
       };
 
       requestAnimationFrame(tick);
     } catch {
-      setErrorMsg(
-        "Impossible d'accéder à la caméra. Vérifie les permissions de ton navigateur."
-      );
+      setErrorMsg("Impossible d'acceder a la camera. Verifie les permissions de ton navigateur.");
       setStatus("error");
     }
   }
@@ -184,210 +198,175 @@ function ScanContent() {
     setStatus("idle");
   }
 
-  // ── Rendu ──
+  const isResultState =
+    status === "success" ||
+    status === "already_scanned" ||
+    status === "no_passport" ||
+    status === "error";
+
   return (
-    <div className="max-w-lg mx-auto px-4 py-12 sm:py-20 text-center">
-      <p className="text-teal text-sm font-semibold uppercase tracking-widest mb-3">
-        Soli&apos;Passeport
-      </p>
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
-        Scanner un stand
-      </h1>
-      <p className="text-gray-400 mb-8">
-        Scanne le QR code affiché à chaque stand du festival pour valider ta
-        participation et gagner des points.
-      </p>
+    <div className="app-page scan-page">
+      <div className="app-page__container scan-page__container">
+        <section className="scan-shell" aria-label="Scanner de stand">
+          <div className="scan-shell__visual" data-reveal>
+            <div className="scan-shell__visual-top">
+              <Link href="/programme" className="scan-shell__back">
+                Retour parcours
+              </Link>
+            </div>
 
-      {/* IDLE */}
-      {status === "idle" && (
-        <div className="space-y-4">
-          <button
-            onClick={startCamera}
-            className="w-full py-5 bg-teal text-navy font-bold text-lg rounded-2xl hover:bg-teal/90 transition-colors focus-visible:ring-2 focus-visible:ring-teal"
-            aria-label="Ouvrir la caméra pour scanner"
-          >
-            📷 Ouvrir la caméra
-          </button>
-          <div className="text-gray-600 text-sm space-y-1">
-            <p>— ou —</p>
-            <p>
-              Utilise la caméra native de ton téléphone pour scanner le QR code
-              du stand. L&apos;application s&apos;ouvrira automatiquement.
-            </p>
-          </div>
-        </div>
-      )}
+            <div className={`scan-preview ${status === "scanning" ? "is-live" : ""}`}>
+              {status === "scanning" ? (
+                <>
+                  <video
+                    ref={videoRef}
+                    className="scan-preview__video"
+                    muted
+                    playsInline
+                    aria-label="Flux camera pour scanner un QR code"
+                  />
+                  <div className="scan-preview__mask" aria-hidden="true">
+                    <div className="scan-preview__focus">
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="scan-preview__passport" aria-hidden="true">
+                  <div className="scan-preview__ticket scan-preview__ticket--top" />
+                  <div className="scan-preview__ticket scan-preview__ticket--middle" />
+                  <div className="scan-preview__ticket scan-preview__ticket--badge" />
+                </div>
+              )}
+            </div>
 
-      {/* SCANNING */}
-      {status === "scanning" && (
-        <div className="space-y-4">
-          <div className="relative rounded-2xl overflow-hidden bg-navy-dark aspect-square border border-teal/20">
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              muted
-              playsInline
-              aria-label="Flux caméra pour le scan QR"
-            />
-            {/* Viseur */}
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              aria-hidden="true"
-            >
-              <div className="relative w-52 h-52">
-                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-teal rounded-tl-lg" />
-                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-teal rounded-tr-lg" />
-                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-teal rounded-bl-lg" />
-                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-teal rounded-br-lg" />
+            {status === "scanning" ? (
+              <div className="scan-shell__caption">
+                <h2>Scannez et ecoutez</h2>
+                <p>Scanne le QR code de l&apos;evenement ou du stand pour valider ta participation.</p>
               </div>
-            </div>
+            ) : (
+              <div className="scan-shell__mini-card">
+                <span className="app-pill">Pass</span>
+                <h3>Ton passeport pour valider tes activites</h3>
+                <p>Chaque scan debloque des points, des badges et la suite du parcours.</p>
+              </div>
+            )}
           </div>
-          <p className="text-teal text-sm animate-pulse" aria-live="polite">
-            Pointe la caméra vers le QR code du stand...
-          </p>
-          <button
-            onClick={stopCamera}
-            className="text-gray-500 text-sm hover:text-gray-300 transition-colors underline"
-            aria-label="Arrêter le scan"
-          >
-            Annuler
-          </button>
-        </div>
-      )}
 
-      {/* PROCESSING */}
-      {status === "processing" && (
-        <div className="py-16">
-          <div
-            className="animate-spin w-16 h-16 border-4 border-teal border-t-transparent rounded-full mx-auto mb-4"
-            role="status"
-            aria-label="Enregistrement en cours"
-          />
-          <p className="text-gray-400">Enregistrement de ta participation...</p>
-        </div>
-      )}
+          <div className="scan-shell__content" data-reveal>
+            {!isResultState ? (
+              <div className="scan-intro">
+                <p className="scan-intro__eyebrow">Soli&apos;Passeport</p>
+                <h1>{statusTitle(status, scannedStand)}</h1>
+                <p className="scan-intro__copy">{statusCopy(status, scannedStand, errorMsg)}</p>
 
-      {/* SUCCESS */}
-      {status === "success" && (
-        <div className="py-6 space-y-6" role="alert" aria-live="assertive">
-          <span className="text-7xl block" role="img" aria-label="Succès">
-            ✅
-          </span>
-          <div>
-            <h2 className="text-2xl font-extrabold text-white mb-2">
-              {scannedStand?.name} validé !
-            </h2>
-            <div className="inline-flex items-center gap-2 bg-teal/20 border border-teal rounded-full px-6 py-2 mb-3">
-              <span
-                className="text-teal font-extrabold text-2xl"
-                aria-label={`${pointsEarned} points gagnés`}
-              >
-                +{pointsEarned} pts
-              </span>
-            </div>
-            <p className="text-gray-500 text-sm">
-              {scannedStand?.sport} · {scannedStand?.location}
-            </p>
+                {status === "idle" ? (
+                  <div className="scan-intro__actions">
+                    <button type="button" onClick={startCamera} className="scan-primary-cta">
+                      <span>📷</span>
+                      <span>Ouvrir la camera</span>
+                    </button>
+
+                    <div className="scan-alt-copy">
+                      <span>ou</span>
+                      <p>
+                        Utilise la camera native de ton telephone pour scanner le QR code du stand.
+                        L&apos;application s&apos;ouvrira automatiquement.
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
+
+                {status === "scanning" ? (
+                  <div className="scan-live-panel">
+                    <div className="scan-live-panel__chip">Camera active</div>
+                    <p>Pointe ton telephone vers le QR code affiche sur le stand.</p>
+                    <button type="button" onClick={stopCamera} className="app-button app-button--secondary">
+                      Annuler
+                    </button>
+                  </div>
+                ) : null}
+
+                {status === "processing" ? (
+                  <div className="scan-processing" role="status" aria-label="Validation en cours">
+                    <div className="scan-processing__spinner" />
+                    <p>Enregistrement de ta participation...</p>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <div className="scan-result">
+                <div className="scan-result__backdrop" aria-hidden="true" />
+                <div className="scan-result__card" role="alert" aria-live="assertive">
+                  <div className="scan-result__icon">
+                    {status === "success" ? "🏵️" : status === "already_scanned" ? "⚡" : status === "no_passport" ? "🎟️" : "✕"}
+                  </div>
+
+                  <div className="scan-result__body">
+                    <h2>{statusTitle(status, scannedStand)}</h2>
+                    <p>{statusCopy(status, scannedStand, errorMsg)}</p>
+
+                    {status === "success" ? (
+                      <>
+                        <div className="scan-result__meta">
+                          <span className="app-pill">{scannedStand?.sport ?? "Activite"}</span>
+                          <span className="scan-result__location">{scannedStand?.location}</span>
+                        </div>
+                        <div className="scan-result__points">+{pointsEarned} points</div>
+                      </>
+                    ) : null}
+
+                    {status === "already_scanned" ? (
+                      <div className="scan-result__meta">
+                        <span className="app-pill">{scannedStand?.sport ?? "Stand valide"}</span>
+                        <span className="scan-result__location">{scannedStand?.location}</span>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="scan-result__actions">
+                    {(status === "success" || status === "already_scanned") && (
+                      <Link href="/passeport" className="app-button app-button--primary">
+                        Voir mon passeport
+                      </Link>
+                    )}
+
+                    {status === "no_passport" && (
+                      <Link href="/passeport" className="app-button app-button--primary">
+                        Creer mon passeport
+                      </Link>
+                    )}
+
+                    {(status === "success" || status === "already_scanned" || status === "error") && (
+                      <button type="button" onClick={reset} className="app-button app-button--secondary">
+                        Scanner un autre stand
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/passeport"
-              className="flex-1 py-3 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors"
-              aria-label="Voir mon passeport mis à jour"
-            >
-              Mon passeport
-            </Link>
-            <button
-              onClick={reset}
-              className="flex-1 py-3 border border-teal text-teal font-bold rounded-full hover:bg-teal/10 transition-colors"
-              aria-label="Scanner un autre stand"
-            >
-              Scanner un autre
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ALREADY SCANNED */}
-      {status === "already_scanned" && (
-        <div className="py-6 space-y-4" role="alert">
-          <span className="text-6xl block" role="img" aria-label="Déjà scanné">
-            ⚡
-          </span>
-          <h2 className="text-xl font-bold text-white">Déjà scanné !</h2>
-          <p className="text-gray-400">
-            Tu as déjà validé le stand{" "}
-            <strong className="text-white">{scannedStand?.name}</strong>.
-            Chaque stand ne compte qu&apos;une fois.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/passeport"
-              className="px-6 py-3 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors text-sm"
-            >
-              Mon passeport
-            </Link>
-            <button
-              onClick={reset}
-              className="px-6 py-3 border border-gray-600 text-gray-400 font-bold rounded-full hover:bg-white/5 transition-colors text-sm"
-            >
-              Scanner un autre stand
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* NO PASSPORT */}
-      {status === "no_passport" && (
-        <div className="py-6 space-y-4" role="alert">
-          <span className="text-6xl block" role="img" aria-label="Passeport requis">
-            🎟
-          </span>
-          <h2 className="text-xl font-bold text-white">
-            Crée ton Soli&apos;Passeport d&apos;abord !
-          </h2>
-          <p className="text-gray-400">
-            Tu dois créer un passeport pour collecter des points.
-          </p>
-          <Link
-            href="/passeport"
-            className="inline-block px-8 py-3 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors"
-          >
-            Créer mon passeport
-          </Link>
-        </div>
-      )}
-
-      {/* ERROR */}
-      {status === "error" && (
-        <div className="py-6 space-y-4" role="alert">
-          <span className="text-6xl block" role="img" aria-label="Erreur">
-            ❌
-          </span>
-          <p className="text-white font-semibold">{errorMsg}</p>
-          <button
-            onClick={reset}
-            className="px-6 py-3 border border-teal text-teal font-bold rounded-full hover:bg-teal/10 transition-colors"
-          >
-            Réessayer
-          </button>
-        </div>
-      )}
+        </section>
+      </div>
     </div>
   );
 }
 
-// ─── Export avec Suspense (requis pour useSearchParams) ───────────────────────
 export default function ScanPage() {
   return (
     <Suspense
       fallback={
-        <div
-          className="flex items-center justify-center min-h-[60vh]"
-          role="status"
-          aria-label="Chargement"
-        >
-          <div className="animate-spin w-12 h-12 border-4 border-teal border-t-transparent rounded-full" />
+        <div className="app-page scan-page">
+          <div className="app-page__container scan-page__container">
+            <div className="scan-loading" role="status" aria-label="Chargement">
+              <div className="scan-processing__spinner" />
+            </div>
+          </div>
         </div>
       }
     >
