@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { CSSProperties } from "react";
 import PageHero from "@/components/PageHero";
 import InteractiveFestivalMap from "@/app/programme/InteractiveFestivalMap";
 
@@ -136,8 +135,8 @@ const mapZones: {
   name: string;
   label: string;
   description: string;
-  placement: CSSProperties;
   accent: ZoneAccent;
+  mapQuery: string;
   scans: string[];
 }[] = [
   {
@@ -145,8 +144,8 @@ const mapZones: {
     name: "Zone A",
     label: "Boccia & precision",
     description: "Premier spot a scanner si tu veux lancer ton passeport facilement.",
-    placement: { top: "14%", left: "17%" } as CSSProperties,
     accent: "yellow",
+    mapQuery: "Grande Halle de la Villette Paris",
     scans: ["SCAN-001"],
   },
   {
@@ -154,8 +153,8 @@ const mapZones: {
     name: "Zone B",
     label: "Yoga inclusif",
     description: "Ateliers doux et espace respiration avec QR code a l'entree.",
-    placement: { top: "24%", right: "18%" } as CSSProperties,
     accent: "lilac",
+    mapQuery: "Cabaret Sauvage Paris",
     scans: [],
   },
   {
@@ -163,8 +162,8 @@ const mapZones: {
     name: "Zone C",
     label: "Goalball",
     description: "Zone paralympique immersive avec demo et scan badge.",
-    placement: { top: "52%", left: "15%" } as CSSProperties,
     accent: "teal",
+    mapQuery: "Cite des Sciences et de l'Industrie Paris",
     scans: [],
   },
   {
@@ -172,8 +171,8 @@ const mapZones: {
     name: "Agora",
     label: "Rencontres & talks",
     description: "Tables rondes, discussions et orientation visiteurs.",
-    placement: { top: "56%", right: "16%" } as CSSProperties,
     accent: "yellow",
+    mapQuery: "Le Trabendo Paris",
     scans: ["SCAN-022"],
   },
   {
@@ -181,8 +180,8 @@ const mapZones: {
     name: "Village defi",
     label: "Defis Solimouv",
     description: "Le coin le plus vivant pour reclamer des badges et activer des mini-jeux.",
-    placement: { bottom: "14%", left: "38%" } as CSSProperties,
     accent: "lilac",
+    mapQuery: "La Folie N5 Parc de la Villette Paris",
     scans: ["SCAN-031", "SCAN-014"],
   },
 ];
@@ -194,6 +193,7 @@ const scanSpots: {
   area: string;
   detail: string;
   zoneId: string;
+  mapQuery: string;
 }[] = [
   {
     id: "spot-accueil",
@@ -202,6 +202,7 @@ const scanSpots: {
     area: "Entree principale",
     detail: "Ton premier QR code pour activer le pass et comprendre le parcours.",
     zoneId: "A",
+    mapQuery: "Grande Halle de la Villette 211 Avenue Jean Jaures Paris",
   },
   {
     id: "spot-football",
@@ -210,6 +211,7 @@ const scanSpots: {
     area: "Terrain central",
     detail: "Badge special + points bonus si tu completes le mini challenge.",
     zoneId: "E",
+    mapQuery: "Prairie du Cercle Nord Parc de la Villette Paris",
   },
   {
     id: "spot-forum",
@@ -218,6 +220,7 @@ const scanSpots: {
     area: "Hall principal",
     detail: "Rencontre les associations et debloque une recompense reseau.",
     zoneId: "D",
+    mapQuery: "Le Trabendo 211 Avenue Jean Jaures Paris",
   },
   {
     id: "spot-defi",
@@ -226,6 +229,7 @@ const scanSpots: {
     area: "Espace engagement",
     detail: "Le meilleur spot pour enchaîner scan, activite et defi mensuel.",
     zoneId: "E",
+    mapQuery: "La Folie N5 Parc de la Villette Paris",
   },
 ];
 
@@ -265,8 +269,8 @@ export default function ProgrammePage() {
       <div className="app-page__container app-grid">
         <PageHero
           eyebrow="Carte festival · 14 juin 2025"
-          title="Carte et activites du festival"
-          description="Tu reperes les zones, les QR codes a scanner et les temps forts en un seul ecran. L'idee: arriver, comprendre, participer sans te perdre."
+          title="Carte interactive du festival"
+          description="Tu reperes les zones, les QR codes a scanner et les temps forts sur une vraie carte, avec un panneau d'action pour savoir ou aller ensuite."
           actions={[
             { href: "/passeport", label: "Creer mon passeport" },
             { href: "/scan", label: "Scanner un code", variant: "secondary" },
@@ -283,8 +287,8 @@ export default function ProgrammePage() {
         <section className="app-card app-card--soft" data-reveal aria-label="Spots de scan">
           <div className="app-card__content">
             <div className="section-heading">
-              <p className="app-hero__eyebrow">Spots QR</p>
-              <h2 className="section-title">Ou scanner pendant le festival</h2>
+              <p className="app-hero__eyebrow">Complement terrain</p>
+              <h2 className="section-title">Les spots QR les plus utiles</h2>
             </div>
 
             <div className="scan-spot-grid stagger-list">

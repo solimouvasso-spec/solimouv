@@ -365,6 +365,153 @@ main {
   align-items: stretch;
 }
 
+.real-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.real-map-card {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  padding: 18px;
+}
+
+.real-map-card__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.real-map-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.real-map-card__title {
+  margin: 4px 0 0;
+  color: var(--color-white-soft);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.real-map-frame-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  min-height: 560px;
+}
+
+.real-map-frame {
+  width: 100%;
+  height: 560px;
+  border: 0;
+  display: block;
+}
+
+.real-map-overlay {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+}
+
+.real-map-overlay__spot {
+  min-height: 30px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(68, 23, 94, 0.88);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.real-map-zones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.real-map-hint {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 247, 251, 0.78);
+  font-size: 0.92rem;
+}
+
+.real-map-hint p {
+  margin: 0;
+}
+
+.real-map-zone-pill {
+  min-height: 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 247, 251, 0.8);
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 2px;
+  padding: 8px 12px;
+  text-align: left;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.real-map-zone-pill span:first-child {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.real-map-zone-pill span:last-child {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.real-map-zone-pill.is-active {
+  transform: translateY(-1px);
+}
+
+.real-map-zone-pill--yellow.is-active {
+  background: rgba(248, 243, 93, 0.18);
+  color: var(--color-yellow);
+}
+
+.real-map-zone-pill--lilac.is-active {
+  background: rgba(208, 166, 234, 0.18);
+  color: var(--color-lilac);
+}
+
+.real-map-zone-pill--teal.is-active {
+  background: rgba(158, 210, 255, 0.18);
+  color: #9ed2ff;
+}
+
 .festival-map {
   position: relative;
   min-height: 520px;
@@ -672,6 +819,18 @@ main {
   background: rgba(248, 243, 93, 0.14);
   color: var(--color-yellow);
   font-size: 0.95rem;
+}
+
+.scan-spot-card.is-active {
+  border-color: rgba(248, 243, 93, 0.32);
+  box-shadow: 0 14px 30px rgba(27, 6, 44, 0.18);
+}
+
+.scan-spot-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .scan-spot-card h3,
@@ -2145,8 +2304,35 @@ main {
   .hero-meta-grid,
   .highlights-grid,
   .map-layout,
+  .real-map-layout,
   .scan-spot-grid,
   .festival-activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .real-map-card__toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .real-map-card__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .real-map-card__actions .app-button {
+    width: 100%;
+  }
+
+  .real-map-frame-wrap {
+    min-height: 380px;
+  }
+
+  .real-map-frame {
+    height: 380px;
+  }
+
+  .real-map-zones {
     grid-template-columns: 1fr;
   }
 
