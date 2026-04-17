@@ -376,7 +376,7 @@ export default function PasseportPage() {
 
   if (step === "passport" && !profile) {
     return (
-      <div className="app-page">
+      <div className="app-page passport-page">
         <div className="app-page__container">
           <div className="passport-onboarding">
             <div className="passport-phone-card">
@@ -408,7 +408,7 @@ export default function PasseportPage() {
 
   if (step === "loading") {
     return (
-      <div className="app-page">
+      <div className="app-page passport-page">
         <div className="app-page__container">
           <div className="flex min-h-[70vh] items-center justify-center">
             <div className="passport-loader" role="status" aria-label="Chargement" />
@@ -420,7 +420,7 @@ export default function PasseportPage() {
 
   if (step === "welcome") {
     return (
-      <div className="app-page">
+      <div className="app-page passport-page">
         <div className="app-page__container">
           <div className="passport-layout">
             <DesktopAside
@@ -488,7 +488,7 @@ export default function PasseportPage() {
 
   if (step === "identity") {
     return (
-      <div className="app-page">
+      <div className="app-page passport-page">
         <div className="app-page__container">
           <div className="passport-layout">
             <DesktopAside
@@ -604,7 +604,7 @@ export default function PasseportPage() {
 
   if (step === "avatar") {
     return (
-      <div className="app-page">
+      <div className="app-page passport-page">
         <div className="app-page__container">
           <div className="passport-layout">
             <DesktopAside
@@ -658,7 +658,7 @@ export default function PasseportPage() {
 
   if (step === "rules") {
     return (
-      <div className="app-page">
+      <div className="app-page passport-page">
         <div className="app-page__container">
           <div className="passport-layout">
             <DesktopAside
@@ -707,7 +707,7 @@ export default function PasseportPage() {
   }
 
   return (
-    <div className="app-page">
+    <div className="app-page passport-page">
       <div className="app-page__container app-grid">
         <div className="passport-dashboard-layout">
           <div className="passport-dashboard" data-reveal>

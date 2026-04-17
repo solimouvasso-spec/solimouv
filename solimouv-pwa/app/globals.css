@@ -93,6 +93,11 @@ main {
     linear-gradient(180deg, #5f2482 0%, #4f1e74 100%);
 }
 
+.passport-page [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
 .app-page__container {
   width: min(100%, 1180px);
   margin: 0 auto;

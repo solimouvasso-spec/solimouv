@@ -22,9 +22,6 @@ export const viewport: Viewport = {
   minimumScale: 1,
 };
 
-const manifestPath =
-  process.env.VERCEL_ENV === "preview" ? undefined : "/manifest.json";
-
 export const metadata: Metadata = {
   title: {
     default: "Solimouv' — Festival du sport inclusif",
@@ -35,7 +32,6 @@ export const metadata: Metadata = {
   keywords: ["sport inclusif", "handicap", "festival", "Paris", "Up Sport", "Solimouv"],
   authors: [{ name: "Up Sport! Paris" }],
   creator: "Up Sport! Paris",
-  manifest: manifestPath,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
