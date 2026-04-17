@@ -82,7 +82,13 @@ function AvatarCard({
 export default function PasseportPage() {
   const [step, setStep] = useState<
     "loading" | "welcome" | "identity" | "avatar" | "rules" | "passport"
-  >("welcome");
+  >(() => {
+    if (typeof window === "undefined") {
+      return "welcome";
+    }
+
+    return localStorage.getItem("solimouv_session_id") ? "loading" : "welcome";
+  });
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [profile, setProfile] = useState<PassportProfile | null>(null);
   const [scans, setScans] = useState<PassportScan[]>([]);
@@ -135,11 +141,8 @@ export default function PasseportPage() {
   useEffect(() => {
     const sessionId = localStorage.getItem("solimouv_session_id");
     if (!sessionId) {
-      setStep("welcome");
       return;
     }
-
-    setStep("loading");
 
     const timeoutId = window.setTimeout(() => {
       void loadPassport(sessionId);
