@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +15,7 @@ const barlow = Barlow_Condensed({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#3B1F7A",
+  themeColor: "#5f2482",
   width: "device-width",
   initialScale: 1,
   minimumScale: 1,
@@ -53,12 +51,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className={`${geist.variable} ${barlow.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-purple-deep text-white antialiased">
-        <Navbar />
-        <main id="main-content" tabIndex={-1} className="flex-1">
+      <body className="min-h-full bg-[#5f2482] text-white antialiased">
+        <main id="main-content" tabIndex={-1}>
           {children}
         </main>
-        <Footer />
       </body>
     </html>
   );
