@@ -101,7 +101,13 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading && user) loadData();
+    if (!authLoading && user) {
+      const timeoutId = window.setTimeout(() => {
+        void loadData();
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
+    }
   }, [authLoading, user, loadData]);
 
   async function handleLogout() {

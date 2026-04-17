@@ -22,7 +22,7 @@ export default function HomePage() {
     <div className="soli-page">
       <section className="hero">
         <div className="soli-container">
-          <header className="soli-topbar">
+          <header className="soli-topbar" data-reveal>
             <LogoMark />
             <Link href="#subscribe" className="soli-cta">
               Voir l&apos;app
@@ -30,24 +30,24 @@ export default function HomePage() {
           </header>
 
           <div className="hero-grid">
-            <div className="hero-floaters" aria-hidden="true">
+            <div className="hero-floaters" aria-hidden="true" data-reveal>
               <div className="sticker hero-badge-left">✺</div>
               <div className="photo-card hero-card-left" />
               <div className="photo-card second hero-card-right" />
               <div className="sticker sticker-yellow hero-badge-right">❂</div>
             </div>
 
-            <h1 className="soli-display hero-title">
+            <h1 className="soli-display hero-title" data-reveal>
               <span className="hero-line">Le festival du sport</span>
               <span className="hero-line">inclusif ou chaque</span>
               <span className="hero-line">mouvement compte</span>
             </h1>
 
-            <p className="hero-subtitle">
+            <p className="hero-subtitle" data-reveal>
               Solimouv festival chaque experience ouvre de nouveaux possible
             </p>
 
-            <Link href="#subscribe" className="soli-cta hero-main-cta">
+            <Link href="#subscribe" className="soli-cta hero-main-cta" data-reveal>
               Je m&apos;inscris
             </Link>
           </div>
@@ -57,7 +57,7 @@ export default function HomePage() {
       <section className="curve-section">
         <div className="intro-panel">
           <div className="soli-container">
-            <h2 className="soli-display intro-title">
+            <h2 className="soli-display intro-title" data-reveal>
               Un festival,
               <br />
               un mouvement,
@@ -65,9 +65,9 @@ export default function HomePage() {
               une vision !
             </h2>
 
-            <div className="feature-photo" aria-hidden="true" />
+            <div className="feature-photo" aria-hidden="true" data-reveal />
 
-            <p className="intro-copy">
+            <p className="intro-copy" data-reveal>
               Ici, le sport n&apos;est pas une performance, c&apos;est un langage commun, un
               espace de rencontre et une experience a vivre sans barriere.
               <br />
@@ -81,16 +81,16 @@ export default function HomePage() {
 
       <section className="blue-band">
         <div className="soli-container blue-content">
-          <h2 className="soli-display blue-title">
+          <h2 className="soli-display blue-title" data-reveal>
             Mais Solimouv ne s&apos;arrete pas au temps d&apos;un week-end.
           </h2>
 
-          <p className="soli-display blue-copy">
+          <p className="soli-display blue-copy" data-reveal>
             Grace a la plateforme Soli&apos;Skills, l&apos;experience continue tout au long de
             l&apos;annee a travers des defis, des rencontres et des engagements sportifs.
           </p>
 
-          <Link href="#subscribe" className="soli-cta skills-button">
+          <Link href="#subscribe" className="soli-cta skills-button" data-reveal>
             Soli&apos;Skills
           </Link>
 
@@ -99,12 +99,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="runner-photo" aria-hidden="true" />
+        <div className="runner-photo" aria-hidden="true" data-reveal />
       </section>
 
       <section className="impact-panel">
         <div className="soli-container">
-          <h2 className="soli-display impact-title">
+          <h2 className="soli-display impact-title" data-reveal>
             Le sport devient un levier d&apos;inclusion sociale.
           </h2>
         </div>
@@ -112,7 +112,7 @@ export default function HomePage() {
 
       <footer className="footer-panel" id="subscribe">
         <div className="soli-container">
-          <div className="footer-top">
+          <div className="footer-top" data-reveal>
             <LogoMark />
 
             <div className="subscribe-wrap">
@@ -134,13 +134,13 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="footer-wordmark" aria-label="Solimouv">
+          <div className="footer-wordmark" aria-label="Solimouv" data-reveal>
             SOLIMOUV
           </div>
 
           <div className="footer-rule" />
 
-          <div className="footer-bottom">
+          <div className="footer-bottom" data-reveal>
             <nav className="footer-links" aria-label="Legal">
               <a href="#">Privacy Policy</a>
               <a href="#">Terms of Service</a>

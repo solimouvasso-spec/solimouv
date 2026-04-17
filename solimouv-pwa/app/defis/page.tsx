@@ -19,7 +19,11 @@ const CATEGORY_COLORS: Record<string, string> = {
 export default function DefisPage() {
   const [challenges, setChallenges] = useState<MonthlyChallenge[]>([]);
   const [participations, setParticipations] = useState<ChallengeParticipation[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId] = useState<string | null>(() =>
+    typeof window === "undefined"
+      ? null
+      : localStorage.getItem("solimouv_session_id")
+  );
   const [loading, setLoading] = useState(true);
 
   // Formulaire de participation
@@ -27,12 +31,6 @@ export default function DefisPage() {
   const [proofText, setProofText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [successId, setSuccessId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const sid = localStorage.getItem("solimouv_session_id");
-    setSessionId(sid);
-    loadData(sid);
-  }, []);
 
   async function loadData(sid: string | null) {
     const currentYear = new Date().getFullYear();
@@ -56,6 +54,14 @@ export default function DefisPage() {
 
     setLoading(false);
   }
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void loadData(sessionId);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [sessionId]);
 
   async function handleParticipate(challenge: MonthlyChallenge) {
     if (!sessionId || !proofText.trim()) return;

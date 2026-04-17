@@ -1,12 +1,12 @@
 {
-  "name": "Solimouv' — Festival du sport inclusif",
-  "short_name": "Solimouv'",
-  "description": "L'application officielle du festival du sport inclusif organisé par Up Sport! Paris.",
+  "name": "Solimouv",
+  "short_name": "Solimouv",
+  "description": "La PWA officielle du festival Solimouv et de son experience mobile inclusive.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0D1B2A",
-  "theme_color": "#0D1B2A",
+  "background_color": "#5f2482",
+  "theme_color": "#5f2482",
   "lang": "fr",
   "icons": [
     {
@@ -26,17 +26,17 @@
   "categories": ["sports", "lifestyle", "social"],
   "shortcuts": [
     {
-      "name": "Programme",
-      "short_name": "Programme",
-      "description": "Voir le programme du festival",
-      "url": "/programme",
+      "name": "Accueil",
+      "short_name": "Accueil",
+      "description": "Ouvrir la landing page Solimouv",
+      "url": "/",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Trouver mon sport",
-      "short_name": "Mon sport",
-      "description": "Matching sportif adapté",
-      "url": "/match",
+      "name": "Passeport",
+      "short_name": "Passeport",
+      "description": "Acceder au Soli'Passeport",
+      "url": "/passeport",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]

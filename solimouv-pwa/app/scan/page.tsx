@@ -94,7 +94,11 @@ function ScanContent() {
   // Si QR code dans l'URL (lien direct depuis un QR code physique)
   useEffect(() => {
     if (standCode && status === "idle") {
-      processCode(standCode);
+      const timeoutId = window.setTimeout(() => {
+        void processCode(standCode);
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
     }
   }, [standCode, status, processCode]);
 

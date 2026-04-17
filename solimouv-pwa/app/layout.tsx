@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
+import AppShell from "@/components/AppShell";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -52,9 +53,11 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${geist.variable} ${barlow.variable} h-full`}>
       <body className="min-h-full bg-[#5f2482] text-white antialiased">
-        <main id="main-content" tabIndex={-1}>
-          {children}
-        </main>
+        <AppShell>
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+        </AppShell>
       </body>
     </html>
   );

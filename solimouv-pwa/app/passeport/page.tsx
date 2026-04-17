@@ -65,7 +65,13 @@ function genSession() {
 }
 
 export default function PasseportPage() {
-  const [step, setStep] = useState<"loading" | "register" | "passport">("loading");
+  const [step, setStep] = useState<"loading" | "register" | "passport">(() =>
+    typeof window === "undefined"
+      ? "loading"
+      : localStorage.getItem("solimouv_session_id")
+        ? "loading"
+        : "register"
+  );
   const [profile, setProfile] = useState<PassportProfile | null>(null);
   const [scans, setScans] = useState<PassportScan[]>([]);
   const [name, setName] = useState("");
@@ -73,13 +79,7 @@ export default function PasseportPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const sid = localStorage.getItem("solimouv_session_id");
-    if (!sid) { setStep("register"); return; }
-    load(sid);
-  }, []);
-
-  async function load(sid: string) {
+  async function loadPassport(sid: string) {
     const { data: prof } = await supabase
       .from("passport_profiles").select("*").eq("session_id", sid).single();
     if (!prof) { setStep("register"); return; }
@@ -90,6 +90,16 @@ export default function PasseportPage() {
     setScans((sc as PassportScan[]) || []);
     setStep("passport");
   }
+
+  useEffect(() => {
+    const sid = localStorage.getItem("solimouv_session_id");
+    if (!sid) return;
+    const timeoutId = window.setTimeout(() => {
+      void loadPassport(sid);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
