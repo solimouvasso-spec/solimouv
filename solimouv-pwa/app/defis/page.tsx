@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   supabase,
@@ -11,47 +11,54 @@ import {
 } from "@/lib/supabase";
 
 const MONTHS_FR = [
-  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+  "Janvier",
+  "Fevrier",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Aout",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Decembre",
 ];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  Boccia: "text-accent border-accent/30 bg-accent/10",
-  Yoga: "text-purple-400 border-purple-400/30 bg-purple-400/10",
-  "Basket fauteuil": "text-teal border-teal/30 bg-teal/10",
-  Goalball: "text-yellow-400 border-yellow-400/30 bg-yellow-400/10",
-};
 
 const SPORT_SUGGESTIONS: Record<
   string,
-  { title: string; description: string; instructions: string; points: number }[]
+  { title: string; description: string; instructions: string; points: number; mood: string }[]
 > = {
   Boccia: [
     {
       title: "Precision en 12 lancers",
-      description: "Place 12 lancers de boccia et essaye de finir avec 5 boules dans la zone cible.",
-      instructions: "Prends une photo de la zone finale ou decris ton meilleur score.",
+      description: "Place 12 lancers et essaye de finir avec 5 boules dans la zone cible.",
+      instructions: "Raconte ton meilleur score ou partage comment tu as adapte ton geste.",
       points: 40,
+      mood: "Precision",
     },
     {
       title: "Boccia en duo",
       description: "Invite une autre personne a tester la boccia avec toi pendant au moins 15 minutes.",
-      instructions: "Raconte ce que vous avez appris ensemble sur le controle et la precision.",
+      instructions: "Explique ce que vous avez appris ensemble sur le rythme et la coordination.",
       points: 35,
+      mood: "Duo",
     },
   ],
   Yoga: [
     {
       title: "Routine souffle et mobilite",
       description: "Realise une mini routine inclusive de 10 minutes axee respiration et mobilite.",
-      instructions: "Decris les postures ou mouvements que tu as preferes.",
+      instructions: "Decris les postures ou mouvements qui t'ont fait le plus de bien.",
       points: 30,
+      mood: "Equilibre",
     },
     {
       title: "Pause bien-etre en groupe",
-      description: "Participe a un moment calme avec une association ou un proche et partage l'experience.",
-      instructions: "Explique comment tu t'es senti avant et apres la seance.",
+      description: "Participe a un moment calme avec une association, un proche ou ton club.",
+      instructions: "Raconte comment tu t'es senti avant et apres la seance.",
       points: 35,
+      mood: "Calme",
     },
   ],
   "Basket fauteuil": [
@@ -60,38 +67,52 @@ const SPORT_SUGGESTIONS: Record<
       description: "Realise une serie de 20 passes ou dribbles adaptes autour d'un atelier basket fauteuil.",
       instructions: "Indique le nombre de passes reussies ou le parcours realise.",
       points: 45,
+      mood: "Energie",
     },
     {
       title: "Match-decouverte",
-      description: "Teste une mini opposition ou un atelier de tir pour comprendre les sensations du basket fauteuil.",
-      instructions: "Raconte ce qui change le plus dans la perception du jeu.",
+      description: "Teste une mini opposition ou un atelier de tir pour comprendre les sensations du jeu.",
+      instructions: "Raconte ce qui change le plus dans ta perception du basket.",
       points: 50,
+      mood: "Match",
     },
   ],
   Goalball: [
     {
       title: "Defi a l'ecoute",
-      description: "Teste 3 sequences de goalball les yeux bandes et concentre-toi sur le son et la coordination.",
+      description: "Teste 3 sequences de goalball les yeux bandes en te concentrant sur le son et l'espace.",
       instructions: "Partage comment tu t'es repere sans la vue.",
       points: 45,
+      mood: "Focus",
     },
     {
       title: "Parcours sensoriel",
       description: "Enchaine un atelier sensoriel et une initiation goalball pour travailler l'orientation.",
       instructions: "Decris le moment ou tu t'es senti le plus en confiance.",
       points: 40,
+      mood: "Sensoriel",
     },
   ],
 };
 
-type SuggestedChallenge = {
-  id: string;
-  title: string;
-  description: string;
-  sport: string;
-  instructions: string;
-  points: number;
-};
+const FALLBACK_SUGGESTIONS = [
+  {
+    id: "multi-1",
+    title: "Defi decouverte inclusive",
+    description: "Teste un sport que tu n'as encore jamais essaye et partage ce que tu as ressenti.",
+    instructions: "Le but est d'ouvrir ton parcours plutot que de performer.",
+    points: 25,
+    mood: "Decouverte",
+  },
+  {
+    id: "multi-2",
+    title: "Defi en binome",
+    description: "Participe avec un ami, un benevole ou une association pour creer une vraie experience a deux.",
+    instructions: "L'inclusion se joue aussi dans la rencontre.",
+    points: 30,
+    mood: "Lien",
+  },
+];
 
 function getSportPreference(scans: PassportScan[]) {
   const counts = scans.reduce<Record<string, number>>((acc, scan) => {
@@ -104,18 +125,22 @@ function getSportPreference(scans: PassportScan[]) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
 }
 
+function getChallengeTone(sport: string) {
+  if (sport === "Goalball") return "defis-card--yellow";
+  if (sport === "Yoga") return "defis-card--lilac";
+  if (sport === "Basket fauteuil") return "defis-card--teal";
+  return "defis-card--soft";
+}
+
 export default function DefisPage() {
   const [challenges, setChallenges] = useState<MonthlyChallenge[]>([]);
   const [participations, setParticipations] = useState<ChallengeParticipation[]>([]);
   const [scans, setScans] = useState<PassportScan[]>([]);
-  const [sessionId] = useState<string | null>(() =>
-    typeof window === "undefined"
-      ? null
-      : localStorage.getItem("solimouv_session_id")
-  );
   const [loading, setLoading] = useState(true);
+  const [sessionId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : localStorage.getItem("solimouv_session_id")
+  );
 
-  // Formulaire de participation
   const [activeId, setActiveId] = useState<string | null>(null);
   const [proofText, setProofText] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -124,21 +149,21 @@ export default function DefisPage() {
   async function loadData(sid: string | null) {
     const currentYear = new Date().getFullYear();
 
-    const { data } = await supabase
+    const { data: challengeRows } = await supabase
       .from("monthly_challenges")
       .select("*")
       .eq("year", currentYear)
       .eq("active", true)
       .order("month", { ascending: false });
 
-    setChallenges((data as MonthlyChallenge[]) || []);
+    setChallenges((challengeRows as MonthlyChallenge[]) || []);
 
     if (sid) {
-      const { data: parts } = await supabase
+      const { data: partRows } = await supabase
         .from("challenge_participations")
         .select("*")
         .eq("session_id", sid);
-      setParticipations((parts as ChallengeParticipation[]) || []);
+      setParticipations((partRows as ChallengeParticipation[]) || []);
 
       const { data: scanRows } = await supabase
         .from("passport_scans")
@@ -172,8 +197,6 @@ export default function DefisPage() {
 
     if (!error) {
       await addPassportPoints(sessionId, 0, challenge.points);
-
-      // Mise à jour optimiste locale
       setParticipations((prev) => [
         ...prev,
         {
@@ -194,324 +217,375 @@ export default function DefisPage() {
     setSubmitting(false);
   }
 
-  function isDone(challengeId: string): boolean {
-    return participations.some((p) => p.challenge_id === challengeId);
+  function isDone(challengeId: string) {
+    return participations.some((participation) => participation.challenge_id === challengeId);
   }
 
   const currentMonth = new Date().getMonth() + 1;
   const preferredSport = getSportPreference(scans);
+  const completedCount = participations.length;
   const currentChallenges = challenges
-    .filter((c) => c.month === currentMonth)
+    .filter((challenge) => challenge.month === currentMonth)
     .sort((a, b) => {
       const aPreferred = preferredSport && a.sport === preferredSport ? 1 : 0;
       const bPreferred = preferredSport && b.sport === preferredSport ? 1 : 0;
       return bPreferred - aPreferred;
     });
-  const pastChallenges = challenges.filter((c) => c.month < currentMonth);
-  const suggestedChallenges: SuggestedChallenge[] = preferredSport
+  const pastChallenges = challenges.filter((challenge) => challenge.month < currentMonth);
+  const suggestionCards = preferredSport
     ? (SPORT_SUGGESTIONS[preferredSport] || []).map((challenge, index) => ({
         id: `${preferredSport}-${index}`,
         sport: preferredSport,
         ...challenge,
       }))
-    : [];
+    : FALLBACK_SUGGESTIONS.map((challenge) => ({
+        ...challenge,
+        sport: "Multi-sports",
+      }));
 
   if (loading) {
     return (
-      <div
-        className="flex items-center justify-center min-h-[60vh]"
-        role="status"
-        aria-label="Chargement des défis"
-      >
-        <div className="animate-spin w-12 h-12 border-4 border-teal border-t-transparent rounded-full" />
+      <div className="app-page defis-page">
+        <div className="app-page__container">
+          <div className="scan-loading" role="status" aria-label="Chargement des defis">
+            <div className="scan-processing__spinner" />
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="app-page">
+    <div className="app-page defis-page">
       <div className="app-page__container app-grid">
-      {/* En-tête */}
-      <header className="text-center mb-12" data-reveal>
-        <p className="text-teal text-sm font-semibold uppercase tracking-widest mb-3">
-          Toute l&apos;année
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
-          Défis mensuels
-        </h1>
-        <p className="text-gray-400 text-lg max-w-xl mx-auto">
-          Chaque mois, nos associations partenaires te lancent un défi sportif.
-          Relève-le pour gagner des points et grimper au classement !
-        </p>
-      </header>
+        <section className="app-card defis-hero" data-reveal>
+          <div className="app-card__content">
+            <div className="defis-hero__layout">
+              <div className="defis-hero__copy">
+                <p className="app-hero__eyebrow">Toute l&apos;annee</p>
+                <h1 className="app-hero__title">Defis mensuels</h1>
+                <p className="app-hero__description">
+                  Chaque mois, nos associations partenaires te lancent un defi sportif. On
+                  priorise maintenant les suggestions qui collent a ton parcours.
+                </p>
 
-      {sessionId ? (
-        <section className="app-card app-card--soft" data-reveal aria-label="Defis recommandes">
+                <div className="hero-meta-grid">
+                  <article className="hero-meta-card">
+                    <p>Sport dominant</p>
+                    <p>{preferredSport ?? "A definir"}</p>
+                  </article>
+                  <article className="hero-meta-card">
+                    <p>Defis valides</p>
+                    <p>{completedCount}</p>
+                  </article>
+                  <article className="hero-meta-card">
+                    <p>Mois actif</p>
+                    <p>{MONTHS_FR[currentMonth - 1]}</p>
+                  </article>
+                </div>
+
+                <div className="app-hero__actions">
+                  {sessionId ? (
+                    <>
+                      <Link href="/passeport" className="app-button app-button--primary">
+                        Voir mon pass
+                      </Link>
+                      <Link href="/programme" className="app-button app-button--secondary">
+                        Explorer le parcours
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/passeport" className="app-button app-button--primary">
+                        Creer mon passeport
+                      </Link>
+                      <Link href="/passeport" className="app-button app-button--secondary">
+                        Me connecter
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="defis-hero__art" aria-hidden="true">
+                <div className="defis-orbit defis-orbit--one" />
+                <div className="defis-orbit defis-orbit--two" />
+                <div className="defis-sticker defis-sticker--yellow">+40</div>
+                <div className="defis-sticker defis-sticker--lilac">DUO</div>
+                <div className="defis-panel">
+                  <span className="app-pill">Suggestion</span>
+                  <strong>{preferredSport ?? "Multi-sports"}</strong>
+                  <p>
+                    {preferredSport
+                      ? "On te pousse des defis proches de ce que tu explores deja."
+                      : "Active ton passeport pour recevoir des recommandations plus fines."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {!sessionId ? (
+          <section className="app-card app-card--soft" data-reveal>
+            <div className="app-card__content defis-cta">
+              <div>
+                <p className="app-hero__eyebrow mb-2">Passeport requis</p>
+                <h2 className="section-title">Connecte-toi pour relever les defis</h2>
+                <p className="app-hero__description max-w-none">
+                  Sans passeport, on ne peut pas enregistrer tes participations ni te proposer
+                  des defis adaptes a ton profil.
+                </p>
+              </div>
+              <div className="defis-cta__actions">
+                <Link href="/passeport" className="app-button app-button--primary">
+                  Creer mon pass
+                </Link>
+                <Link href="/passeport" className="app-button app-button--secondary">
+                  Me connecter
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="app-card app-card--soft" data-reveal aria-label="Suggestions personnalisees">
           <div className="app-card__content">
             <div className="section-heading">
               <p className="app-hero__eyebrow">Pour toi</p>
               <h2 className="section-title">
                 {preferredSport
-                  ? `Defis proposes autour de ${preferredSport}`
-                  : "On apprend encore tes preferences"}
+                  ? `Defis recommandes autour de ${preferredSport}`
+                  : "Quelques idees pour lancer ton parcours"}
               </h2>
               <p className="app-hero__description">
                 {preferredSport
-                  ? "On te recommande en priorite des defis proches du sport que tu explores le plus dans ton passeport."
-                  : "Scanne quelques stands ou participe a une activite pour qu'on puisse te proposer des defis plus pertinents."}
+                  ? "Ces suggestions sont basees sur les stands et activites que tu as deja explores."
+                  : "On n'a pas encore assez de donnees, donc on te propose des defis multi-sports pour commencer."}
               </p>
             </div>
 
-            {preferredSport ? (
-              <div className="festival-activity-grid stagger-list">
-                {suggestedChallenges.map((challenge, index) => (
-                  <article
-                    key={challenge.id}
-                    className="festival-activity-card festival-activity-card--lilac"
-                    data-reveal
-                    style={{ ["--stagger-index" as string]: index }}
-                  >
-                    <span className="app-pill">{challenge.sport}</span>
-                    <h3>{challenge.title}</h3>
-                    <p>{challenge.description}</p>
-                    <p className="text-white/55 text-sm mt-3 mb-0">{challenge.instructions}</p>
-                    <div className="scan-spot-card__actions mt-4">
-                      <span className="app-button app-button--secondary">+{challenge.points} pts</span>
-                      <button
-                        type="button"
-                        className="app-button app-button--primary"
-                        onClick={() => setProofText(challenge.title)}
-                      >
-                        Ca m&apos;interesse
-                      </button>
-                    </div>
-                  </article>
-                ))}
+            <div className="highlights-grid stagger-list">
+              {suggestionCards.map((challenge, index) => (
+                <article
+                  key={challenge.id}
+                  className={`highlight-card ${getChallengeTone(challenge.sport)}`}
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                >
+                  <span className="app-pill">{challenge.sport}</span>
+                  <h3>{challenge.title}</h3>
+                  <p>{challenge.description}</p>
+                  <p className="highlight-card__note">{challenge.instructions}</p>
+                  <div className="scan-spot-card__actions">
+                    <span className="app-button app-button--secondary">+{challenge.points} pts</span>
+                    <span className="app-button app-button--ghost">{challenge.mood}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="app-card" data-reveal aria-labelledby="current-heading">
+          <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Mois en cours</p>
+              <h2 id="current-heading" className="section-title">
+                Defi du mois · {MONTHS_FR[currentMonth - 1]}
+              </h2>
+            </div>
+
+            {currentChallenges.length === 0 ? (
+              <div className="defis-empty">
+                <div className="defis-empty__art" aria-hidden="true">
+                  <span className="defis-empty__dot defis-empty__dot--one" />
+                  <span className="defis-empty__dot defis-empty__dot--two" />
+                  <span className="defis-empty__icon">✦</span>
+                </div>
+                <div>
+                  <h3>Aucun defi publie pour ce mois</h3>
+                  <p>
+                    Les associations preparent le prochain challenge. En attendant, tu peux
+                    avancer sur le parcours, scanner des stands et enrichir ton profil.
+                  </p>
+                </div>
+                <div className="defis-empty__actions">
+                  <Link href={sessionId ? "/programme" : "/passeport"} className="app-button app-button--primary">
+                    {sessionId ? "Voir la carte" : "Creer mon pass"}
+                  </Link>
+                  <Link href={sessionId ? "/scan" : "/passeport"} className="app-button app-button--secondary">
+                    {sessionId ? "Scanner un stand" : "Me connecter"}
+                  </Link>
+                </div>
               </div>
             ) : (
-              <div className="text-center py-8 bg-white/5 rounded-3xl border border-white/10">
-                <p className="text-white/70 m-0">
-                  Commence par scanner un stand ou valider une activite pour declencher des recommandations personnalisees.
-                </p>
+              <div className="timeline stagger-list">
+                {currentChallenges.map((challenge, index) => {
+                  const done = isDone(challenge.id);
+                  const success = successId === challenge.id;
+                  const isActive = activeId === challenge.id;
+
+                  return (
+                    <article
+                      key={challenge.id}
+                      className="timeline-item"
+                      data-reveal
+                      style={{ ["--stagger-index" as string]: index }}
+                    >
+                      <time className="timeline-time" dateTime={`2026-${String(currentMonth).padStart(2, "0")}-01`}>
+                        +{challenge.points}
+                      </time>
+                      <div className="timeline-card">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <span className="app-pill">{challenge.sport}</span>
+                          {preferredSport === challenge.sport ? (
+                            <span className="map-chip map-chip--yellow">Recommande</span>
+                          ) : null}
+                        </div>
+
+                        <h3 className="timeline-card__title">{challenge.title}</h3>
+                        <p className="timeline-card__copy">{challenge.description}</p>
+
+                        {challenge.instructions ? (
+                          <p className="highlight-card__note">Conseil: {challenge.instructions}</p>
+                        ) : null}
+
+                        {done || success ? (
+                          <div className="defis-status">
+                            <span>✅</span>
+                            <span>
+                              {success
+                                ? "Participation enregistree. L'association peut maintenant la verifier."
+                                : "Tu as deja releve ce defi."}
+                            </span>
+                          </div>
+                        ) : sessionId ? (
+                          isActive ? (
+                            <div className="defis-form">
+                              <label htmlFor={`proof-${challenge.id}`} className="defis-form__label">
+                                Raconte ta participation
+                              </label>
+                              <textarea
+                                id={`proof-${challenge.id}`}
+                                value={proofText}
+                                onChange={(event) => setProofText(event.target.value)}
+                                placeholder="Ex: J'ai participe a une initiation avec mon club et j'ai decouvert..."
+                                rows={4}
+                                className="passport-input"
+                              />
+                              <div className="defis-form__actions">
+                                <button
+                                  type="button"
+                                  onClick={() => handleParticipate(challenge)}
+                                  disabled={submitting || !proofText.trim()}
+                                  className="app-button app-button--primary"
+                                >
+                                  {submitting ? "Envoi..." : "Valider ma participation"}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setActiveId(null);
+                                    setProofText("");
+                                  }}
+                                  className="app-button app-button--secondary"
+                                >
+                                  Annuler
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="scan-spot-card__actions">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setActiveId(challenge.id);
+                                  setProofText(challenge.title);
+                                }}
+                                className="app-button app-button--primary"
+                              >
+                                Relever le defi
+                              </button>
+                              <Link href="/programme" className="app-button app-button--secondary">
+                                Voir les activites
+                              </Link>
+                            </div>
+                          )
+                        ) : (
+                          <div className="scan-spot-card__actions">
+                            <Link href="/passeport" className="app-button app-button--primary">
+                              Creer mon pass
+                            </Link>
+                            <Link href="/passeport" className="app-button app-button--secondary">
+                              Me connecter
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </div>
         </section>
-      ) : null}
 
-      {/* Pas de passeport */}
-      {!sessionId && (
-        <aside
-          className="mb-8 p-4 rounded-xl bg-accent/10 border border-accent/30 text-center"
-          role="note"
-        >
-          <p className="text-gray-300 mb-3 text-sm">
-            Crée ton Soli&apos;Passeport pour participer aux défis et gagner des
-            points !
-          </p>
-          <Link
-            href="/passeport"
-            className="inline-block px-6 py-2 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors text-sm"
-            aria-label="Créer mon Soli'Passeport"
-          >
-            Créer mon passeport
-          </Link>
-        </aside>
-      )}
+        {pastChallenges.length > 0 ? (
+          <section className="app-card" data-reveal aria-labelledby="past-heading">
+            <div className="app-card__content">
+              <div className="section-heading">
+                <p className="app-hero__eyebrow">Archives</p>
+                <h2 id="past-heading" className="section-title">
+                  Defis precedents
+                </h2>
+              </div>
 
-      {/* Défi du mois courant */}
-      <section aria-labelledby="current-heading" className="mb-10" data-reveal>
-        <h2 id="current-heading" className="text-xl font-bold text-white mb-5">
-          Défi du mois —{" "}
-          <span className="text-teal">{MONTHS_FR[currentMonth - 1]}</span>
-        </h2>
-
-        {currentChallenges.length === 0 ? (
-          <div className="text-center py-12 bg-navy-light rounded-2xl border border-teal/10">
-            <span className="text-4xl block mb-3" role="img" aria-label="Calendrier">
-              📅
-            </span>
-            <p className="text-gray-400 mb-3">
-              Aucun défi publie pour ce mois. Les associations preparent le prochain.
-            </p>
-            {preferredSport ? (
-              <p className="text-white/70 text-sm m-0">
-                En attendant, on te suggere de viser plutot des activites autour de <strong>{preferredSport}</strong>.
-              </p>
-            ) : null}
-          </div>
-        ) : (
-          <ul className="space-y-4" role="list">
-            {currentChallenges.map((challenge) => {
-              const done = isDone(challenge.id);
-              const success = successId === challenge.id;
-              const isActive = activeId === challenge.id;
-              const sportColor =
-                CATEGORY_COLORS[challenge.sport] ||
-                "text-teal border-teal/30 bg-teal/10";
-
-              return (
-                <li
-                  key={challenge.id}
-                  className={`bg-navy-light rounded-2xl p-6 border-2 transition-all ${
-                    done ? "border-teal" : "border-teal/20 hover:border-teal/40"
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-3 gap-3">
-                    <div className="flex-1 min-w-0">
-                      <span
-                        className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full border mb-2 ${sportColor}`}
-                      >
-                        {challenge.sport}
-                      </span>
-                      <h3 className="text-white font-bold text-lg leading-snug">
-                        {challenge.title}
-                      </h3>
+              <div className="support-grid stagger-list">
+                {pastChallenges.map((challenge, index) => (
+                  <article
+                    key={challenge.id}
+                    className="support-card"
+                    data-reveal
+                    style={{ ["--stagger-index" as string]: index }}
+                  >
+                    <div className="support-card__icon">{isDone(challenge.id) ? "✅" : "✦"}</div>
+                    <div>
+                      <p className="support-card__title">
+                        {MONTHS_FR[challenge.month - 1]} · {challenge.sport}
+                      </p>
+                      <p className="support-card__copy">{challenge.title}</p>
                     </div>
-                    <span className="shrink-0 bg-teal/20 text-teal text-sm font-bold px-3 py-1.5 rounded-full">
-                      +{challenge.points} pts
+                    <span className="app-pill">
+                      {isDone(challenge.id) ? "Fait" : `+${challenge.points} pts`}
                     </span>
-                  </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
-                  <p className="text-gray-400 text-sm mb-3 leading-relaxed">
-                    {challenge.description}
-                  </p>
-
-                  {challenge.instructions && (
-                    <p className="text-gray-600 text-xs mb-4 leading-relaxed border-l-2 border-teal/20 pl-3">
-                      💡 {challenge.instructions}
-                    </p>
-                  )}
-
-                  {/* État participation */}
-                  {done || success ? (
-                    <div
-                      className="flex items-center gap-2 text-teal font-semibold text-sm"
-                      role="status"
-                    >
-                      <span role="img" aria-label="Validé">✅</span>
-                      {success
-                        ? "Participation enregistrée ! En attente de validation par l'asso."
-                        : "Tu as déjà relevé ce défi !"}
-                    </div>
-                  ) : sessionId ? (
-                    isActive ? (
-                      <div className="space-y-3 mt-2">
-                        <label
-                          htmlFor={`proof-${challenge.id}`}
-                          className="block text-sm font-medium text-gray-300"
-                        >
-                          Décris ta participation{" "}
-                          <span aria-hidden="true" className="text-accent">
-                            *
-                          </span>
-                        </label>
-                        <textarea
-                          id={`proof-${challenge.id}`}
-                          value={proofText}
-                          onChange={(e) => setProofText(e.target.value)}
-                          placeholder="Ex: J'ai testé le boccia avec 3 amis pendant 45 min au parc..."
-                          rows={3}
-                          required
-                          aria-required="true"
-                          className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors text-sm resize-none"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleParticipate(challenge)}
-                            disabled={submitting || !proofText.trim()}
-                            className="flex-1 py-2.5 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            aria-label="Valider ma participation au défi"
-                          >
-                            {submitting ? "Envoi..." : "Valider ma participation"}
-                          </button>
-                          <button
-                            onClick={() => {
-                              setActiveId(null);
-                              setProofText("");
-                            }}
-                            className="py-2.5 px-4 border border-gray-700 text-gray-400 rounded-full text-sm hover:bg-white/5 transition-colors"
-                            aria-label="Annuler"
-                          >
-                            Annuler
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setActiveId(challenge.id)}
-                        className="py-2.5 px-6 bg-accent text-white font-bold rounded-full hover:bg-accent/90 transition-colors text-sm"
-                        aria-label={`Relever le défi : ${challenge.title}`}
-                      >
-                        Relever le défi 🎯
-                      </button>
-                    )
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
-
-      {/* Défis passés */}
-      {pastChallenges.length > 0 && (
-        <section aria-labelledby="past-heading" data-reveal>
-          <h2 id="past-heading" className="text-xl font-bold text-white mb-4">
-            Défis précédents
-          </h2>
-          <ul className="space-y-2" role="list">
-            {pastChallenges.map((challenge) => {
-              const done = isDone(challenge.id);
-              return (
-                <li
-                  key={challenge.id}
-                  className={`flex items-center justify-between bg-navy-light rounded-xl px-5 py-4 border transition-all ${
-                    done ? "border-teal/40" : "border-teal/10 opacity-70"
-                  }`}
-                >
-                  <div>
-                    <p className="text-gray-500 text-xs mb-0.5">
-                      {MONTHS_FR[challenge.month - 1]} · {challenge.sport}
-                    </p>
-                    <p className="text-white font-semibold text-sm">
-                      {challenge.title}
-                    </p>
-                  </div>
-                  <div className="text-right shrink-0 ml-3">
-                    {done ? (
-                      <span
-                        className="text-teal text-sm font-semibold"
-                        aria-label="Défi complété"
-                      >
-                        ✅ Fait
-                      </span>
-                    ) : (
-                      <span className="text-gray-600 text-xs">
-                        +{challenge.points} pts
-                      </span>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+        <section className="app-card app-card--soft" data-reveal>
+          <div className="app-card__content defis-cta">
+            <div>
+              <p className="app-hero__eyebrow mb-2">Associations</p>
+              <h2 className="section-title">Proposer un defi mensuel</h2>
+              <p className="app-hero__description max-w-none">
+                Si tu representes une association, tu peux soumettre un nouveau challenge et
+                nourrir le parcours toute l&apos;annee.
+              </p>
+            </div>
+            <div className="defis-cta__actions">
+              <Link href="/contact" className="app-button app-button--primary">
+                Proposer un defi
+              </Link>
+              <Link href="/associations" className="app-button app-button--secondary">
+                Voir les associations
+              </Link>
+            </div>
+          </div>
         </section>
-      )}
-
-      {/* CTA bas de page */}
-      <div className="mt-12 text-center" data-reveal>
-        <p className="text-gray-400 mb-4 text-sm">
-          Tu représentes une association ? Propose un défi mensuel !
-        </p>
-        <Link
-          href="/contact"
-          className="inline-flex items-center justify-center px-6 py-3 border border-teal text-teal font-semibold rounded-full hover:bg-teal/10 transition-colors text-sm"
-          aria-label="Contacter pour proposer un défi"
-        >
-          Proposer un défi
-        </Link>
-      </div>
       </div>
     </div>
   );
