@@ -43,16 +43,49 @@ const BADGES = [
 ];
 
 const AVATARS = [
-  { id: "standing", icon: "🧍", accent: "#e58adb" },
-  { id: "wheel", icon: "♿", accent: "#6551ff" },
-  { id: "runner", icon: "🏃", accent: "#194f37" },
-  { id: "duo", icon: "🤝", accent: "#f8f35d" },
+  { id: "standing", icon: "A", accent: "#e58adb", label: "Debout" },
+  { id: "wheel", icon: "B", accent: "#6551ff", label: "Roues" },
+  { id: "runner", icon: "C", accent: "#194f37", label: "Elan" },
+  { id: "duo", icon: "D", accent: "#f8f35d", label: "Duo" },
 ];
 
 const GOALS = [
-  "Scanner des stands et debloquer des badges.",
-  "Participer a des activites sans pression.",
-  "Construire ton parcours pendant le festival.",
+  {
+    title: "Explorer",
+    copy: "Scanne les QR codes des stands et debloque de nouveaux badges.",
+  },
+  {
+    title: "Participer",
+    copy: "Essaie des activites inclusives sans pression et avance a ton rythme.",
+  },
+  {
+    title: "Revenir",
+    copy: "Retrouve ton passeport plus tard avec ton email uniquement.",
+  },
+];
+
+const FALLBACK_ACTIVITIES = [
+  {
+    id: "cyclisme",
+    name: "Cyclisme",
+    copy: "Participez a deux evenements",
+    icon: "✺",
+    accent: "blue",
+  },
+  {
+    id: "kayak",
+    name: "Kayak",
+    copy: "Participez a un evenement",
+    icon: "◌",
+    accent: "lilac",
+  },
+  {
+    id: "football",
+    name: "Football",
+    copy: "Reclamez votre badge",
+    icon: "❂",
+    accent: "yellow",
+  },
 ];
 
 const TOTAL_STANDS = 10;
@@ -129,13 +162,7 @@ function DesktopAside({
 export default function PasseportPage() {
   const [step, setStep] = useState<
     "loading" | "welcome" | "identity" | "avatar" | "rules" | "passport"
-  >(() => {
-    if (typeof window === "undefined") {
-      return "welcome";
-    }
-
-    return localStorage.getItem("solimouv_session_id") ? "loading" : "welcome";
-  });
+  >("loading");
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [profile, setProfile] = useState<PassportProfile | null>(null);
   const [scans, setScans] = useState<PassportScan[]>([]);
@@ -219,11 +246,12 @@ export default function PasseportPage() {
 
   useEffect(() => {
     const sessionId = localStorage.getItem("solimouv_session_id");
-    if (!sessionId) {
-      return;
-    }
-
     const timeoutId = window.setTimeout(() => {
+      if (!sessionId) {
+        setStep("welcome");
+        return;
+      }
+
       void loadPassport(sessionId).then((loaded) => {
         if (loaded) return;
 
@@ -321,6 +349,30 @@ export default function PasseportPage() {
   const selectedAvatarData =
     AVATARS.find((avatar) => avatar.id === selectedAvatar) ?? AVATARS[0];
   const progress = Math.min((scans.length / TOTAL_STANDS) * 100, 100);
+  const dashboardActivities =
+    scans.length > 0
+      ? scans.slice(0, 3).map((scan, index) => ({
+          id: scan.id,
+          name: scan.festival_stands?.name ?? FALLBACK_ACTIVITIES[index]?.name ?? "Stand valide",
+          copy:
+            scan.festival_stands?.sport ??
+            FALLBACK_ACTIVITIES[index]?.copy ??
+            "Activite du festival",
+          icon:
+            scan.festival_stands?.category === "equipe"
+              ? "◌"
+              : index === 2
+                ? "❂"
+                : "✺",
+          accent: index === 2 ? "yellow" : index === 1 ? "lilac" : "blue",
+          progress: Math.min((scan.points_earned / 25) * 100, 100),
+          action: index === 2 ? "Reclamer" : undefined,
+        }))
+      : FALLBACK_ACTIVITIES.map((item, index) => ({
+          ...item,
+          progress: index === 2 ? 100 : index === 1 ? 74 : 48,
+          action: index === 2 ? "Reclamer" : undefined,
+        }));
 
   if (step === "passport" && !profile) {
     return (
@@ -373,11 +425,11 @@ export default function PasseportPage() {
           <div className="passport-layout">
             <DesktopAside
               title="Ton passeport pour bouger sans pression"
-              subtitle="Un parcours simple: tu crees ton pass, tu scans, tu debloques des badges."
+              subtitle="Le meme parcours que sur mobile, mais pose proprement sur desktop avec une vraie lecture de produit."
               bullets={[
-                "Pas de mot de passe: ton email suffit.",
-                "Des recompenses pendant le festival.",
-                "Une experience mobile, mais lisible sur desktop.",
+                "Creation et connexion dans le meme flow.",
+                "Un style carte mobile tres proche des maquettes.",
+                "Un dashboard lisible tout de suite apres connexion.",
               ]}
               photo={PASSPORT_PHOTO}
             />
@@ -385,6 +437,7 @@ export default function PasseportPage() {
             <div className="passport-onboarding">
               <div className="passport-phone-card" data-reveal>
                 <div className="passport-hero-art">
+                  <div className="passport-brandmark">SOLI<br />MOUV</div>
                   <div className="passport-book">
                     <div className="passport-badge passport-badge--top">🔒</div>
                     <div className="passport-badge passport-badge--mid">🔒</div>
@@ -411,17 +464,19 @@ export default function PasseportPage() {
                   >
                     Creer mon Soli&apos;Passeport
                   </button>
-                  <button
-                    type="button"
-                    className="passport-secondary-btn"
-                    onClick={() => {
-                      setMode("login");
-                      setStep("identity");
-                      setError(null);
-                    }}
-                  >
-                    J&apos;ai deja un passeport
-                  </button>
+                  <p className="passport-inline-link">
+                    <button
+                      type="button"
+                      className="passport-text-btn"
+                      onClick={() => {
+                        setMode("login");
+                        setStep("identity");
+                        setError(null);
+                      }}
+                    >
+                      J&apos;ai deja un passeport
+                    </button>
+                  </p>
                 </div>
               </div>
             </div>
@@ -440,13 +495,13 @@ export default function PasseportPage() {
               title={mode === "signup" ? "Creation du pass" : "Connexion au pass"}
               subtitle={
                 mode === "signup"
-                  ? "On cree ton Soli'Passeport en 2 etapes: infos puis avatar."
-                  : "Un seul champ: ton email. On retrouve ton passeport."
+                  ? "Exactement comme les maquettes: grand fond graphique, bloc blanc, question directe."
+                  : "Connexion ultra simple: ton adresse mail et on recharge ton passeport."
               }
               bullets={[
-                "Zones de clic larges, app-like.",
-                "Feedback visuel au clic.",
-                "Coherent avec la landing.",
+                "Le mot de passe disparait du parcours passeport.",
+                "Le formulaire reste tres mobile-first.",
+                "Desktop et mobile gardent la meme hierarchie visuelle.",
               ]}
               photo={PASSPORT_PHOTO_ALT}
             />
@@ -477,6 +532,8 @@ export default function PasseportPage() {
                       Connexion
                     </button>
                   </div>
+
+                  <div className="passport-id-brand">SOLI<br />MOUV</div>
 
                   <h1 className="passport-sheet__title">
                     {mode === "signup"
@@ -552,11 +609,11 @@ export default function PasseportPage() {
           <div className="passport-layout">
             <DesktopAside
               title="Choisis ton avatar"
-              subtitle="Un repere visuel dans ton passeport. Tu peux changer plus tard."
+              subtitle="On garde le principe des 4 cartes colorees comme sur tes maquettes, avec une lecture plus propre sur desktop."
               bullets={[
-                "Lisible sur grand ecran.",
-                "Cartes et ombres soft.",
-                "Animations legeres.",
+                "Selection claire et tactile.",
+                "Tuiles colorees et contraste fort.",
+                "Meme rendu produit sur mobile et desktop.",
               ]}
               photo={PASSPORT_PHOTO}
             />
@@ -579,6 +636,7 @@ export default function PasseportPage() {
                           accent={avatar.accent}
                           active={selectedAvatar === avatar.id}
                         />
+                        <span className="passport-avatar-label">{avatar.label}</span>
                       </button>
                     ))}
                   </div>
@@ -605,11 +663,11 @@ export default function PasseportPage() {
           <div className="passport-layout">
             <DesktopAside
               title="Le but du jeu"
-              subtitle="Tu scans des stands pendant le festival pour progresser et gagner des badges."
+              subtitle="La derniere etape d'onboarding doit etre tres lisible: 3 cartes sombres, un seul CTA et c'est parti."
               bullets={[
-                "1 scan = points + badges.",
-                "Ton parcours reste accessible apres.",
-                "Soli'Skills prolonge l'experience.",
+                "Tu comprends le jeu en 5 secondes.",
+                "Les regles restent courtes et actionnables.",
+                "Apres validation, on arrive sur le home passeport.",
               ]}
               photo={PASSPORT_PHOTO_ALT}
             />
@@ -621,9 +679,12 @@ export default function PasseportPage() {
                   <h1 className="passport-sheet__title">Le but du jeu :</h1>
                   <div className="passport-goals">
                     {GOALS.map((goal) => (
-                      <div key={goal} className="passport-goal-card">
+                      <div key={goal.title} className="passport-goal-card">
                         <span className="passport-goal-icon">❂</span>
-                        <p>{goal}</p>
+                        <div>
+                          <strong>{goal.title}</strong>
+                          <p>{goal.copy}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -656,16 +717,18 @@ export default function PasseportPage() {
                   Salut {profile?.display_name} <span aria-hidden="true">👋</span>
                 </p>
                 <p className="passport-dashboard__sub">
-                  Bienvenue dans ton Soli&apos;Passeport
+                  {scans.length > 0
+                    ? "Pret a explorer ta Soli'journee ?"
+                    : "Bienvenue dans ton Soli&apos;Passeport"}
                 </p>
               </div>
               <div className="passport-dashboard__score">
-                <span>{selectedAvatarData.icon}</span>
+                <span>{earnedBadges.length}</span>
                 <strong>{profile?.total_points ?? 0}</strong>
               </div>
             </div>
 
-            <div className="passport-dashboard__book">
+            <div className="passport-dashboard__canvas">
               <div className="passport-book passport-book--large">
                 <div className="passport-badge passport-badge--top">🔒</div>
                 <div className="passport-badge passport-badge--mid">🔒</div>
@@ -685,6 +748,9 @@ export default function PasseportPage() {
                   );
                 })}
               </div>
+              <div className="passport-dashboard__canvas-avatar">
+                <span>{selectedAvatarData.icon}</span>
+              </div>
             </div>
 
             <div className="passport-dashboard__section">
@@ -697,35 +763,35 @@ export default function PasseportPage() {
                   </div>
                 </div>
                 <Link href="/scan" className="passport-primary-btn passport-primary-btn--small">
-                  Scanner un stand
+                  Activer la camera
                 </Link>
               </div>
 
-              {scans.slice(0, 2).map((scan) => (
-                <div key={scan.id} className="passport-activity-card">
+              {dashboardActivities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className={`passport-activity-card passport-activity-card--${activity.accent}`}
+                >
                   <div className="passport-activity-card__head">
-                    <span className="passport-activity-icon passport-activity-icon--light">
-                      {scan.festival_stands?.category === "equipe" ? "🤝" : "❂"}
+                    <span className={`passport-activity-icon passport-activity-icon--${activity.accent}`}>
+                      {activity.icon}
                     </span>
                     <div>
-                      <h2>{scan.festival_stands?.name ?? "Stand valide"}</h2>
-                      <p>{scan.festival_stands?.sport ?? "Activite du festival"}</p>
+                      <h2>{activity.name}</h2>
+                      <p>{activity.copy}</p>
                     </div>
                   </div>
+                  {activity.action ? (
+                    <span className="passport-inline-cta">{activity.action}</span>
+                  ) : null}
                   <div className="passport-progress">
                     <div
                       className="passport-progress__bar"
-                      style={{ width: `${Math.min((scan.points_earned / 25) * 100, 100)}%` }}
+                      style={{ width: `${activity.progress}%` }}
                     />
                   </div>
                 </div>
               ))}
-
-              {scans.length === 0 ? (
-                <div className="passport-activity-card passport-activity-card--empty">
-                  <p>Tu n&apos;as encore rien scanne. Commence ton parcours sur le festival.</p>
-                </div>
-              ) : null}
             </div>
 
             <div className="passport-dashboard__footer">
@@ -739,14 +805,14 @@ export default function PasseportPage() {
                 </div>
               </div>
               <div className="passport-dashboard__actions">
+                <Link href="/passeport" className="passport-link-btn">
+                  Passeport
+                </Link>
+                <Link href="/scan" className="passport-link-btn passport-link-btn--active">
+                  Scanner
+                </Link>
                 <Link href="/programme" className="passport-link-btn">
                   Carte
-                </Link>
-                <Link href="/defis" className="passport-link-btn passport-link-btn--active">
-                  Defis
-                </Link>
-                <Link href="/classement" className="passport-link-btn">
-                  Passeport
                 </Link>
               </div>
             </div>
@@ -754,10 +820,10 @@ export default function PasseportPage() {
 
           <div className="passport-sidecard app-card app-card--soft" data-reveal>
             <div className="app-card__content">
-              <p className="app-hero__eyebrow mb-2">Prochaine etape</p>
-              <h2 className="m-0 text-3xl font-extrabold text-white">Ton parcours</h2>
+              <p className="app-hero__eyebrow mb-2">Apres connexion</p>
+              <h2 className="m-0 text-3xl font-extrabold text-white">Le home du pass</h2>
               <p className="mt-3 mb-0 text-white/70 leading-relaxed">
-                Sur desktop, tout est plus clair: raccourcis, stats et progression au meme endroit.
+                Apres connexion, on arrive sur la carte passeport: progression, activites, badges et acces rapide au scan.
               </p>
 
               <div className="passport-sidecard__photo">
@@ -765,11 +831,11 @@ export default function PasseportPage() {
               </div>
 
               <div className="passport-sidecard__grid">
-                <Link href="/programme" className="passport-sidecard__cta">
-                  Voir le programme
+                <Link href="/passeport" className="passport-sidecard__cta">
+                  Voir le pass
                 </Link>
                 <Link href="/scan" className="passport-sidecard__cta passport-sidecard__cta--primary">
-                  Scanner un stand
+                  Activer la camera
                 </Link>
                 <Link href="/defis" className="passport-sidecard__cta">
                   Decouvrir les defis

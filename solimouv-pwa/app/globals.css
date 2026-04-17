@@ -823,6 +823,33 @@ main {
   overflow: hidden;
 }
 
+.passport-brandmark,
+.passport-id-brand {
+  position: absolute;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.82;
+  color: #fff;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+}
+
+.passport-brandmark {
+  top: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4.1rem;
+  text-align: center;
+}
+
+.passport-id-brand {
+  top: -212px;
+  left: 22px;
+  font-size: 4rem;
+}
+
 .passport-swirl-bg::before,
 .passport-ribbon-bg::before,
 .passport-swirl-bg::after,
@@ -899,6 +926,22 @@ main {
 
 .passport-sheet__note {
   font-size: 0.78rem;
+}
+
+.passport-inline-link {
+  margin: 12px 0 0;
+  text-align: center;
+}
+
+.passport-text-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: #5f2482;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .passport-form {
@@ -994,6 +1037,8 @@ main {
   border: none;
   background: transparent;
   padding: 0;
+  display: grid;
+  gap: 8px;
 }
 
 .passport-avatar-card {
@@ -1007,12 +1052,23 @@ main {
 }
 
 .passport-avatar-card span {
-  font-size: 2.5rem;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: #2c2434;
+  text-transform: uppercase;
 }
 
 .passport-avatar-card.is-active {
   border-color: #5f2482;
   transform: translateY(-2px);
+}
+
+.passport-avatar-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #5f2482;
+  text-align: center;
 }
 
 .passport-goals {
@@ -1030,6 +1086,14 @@ main {
   border-radius: 16px;
   background: #161616;
   color: #fff;
+}
+
+.passport-goal-card strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.96rem;
+  color: #fff;
+  text-transform: uppercase;
 }
 
 .passport-goal-card p {
@@ -1146,8 +1210,29 @@ main {
   font-size: 1.1rem;
 }
 
-.passport-dashboard__book {
+.passport-dashboard__canvas {
   padding: 18px 18px 8px;
+  position: relative;
+}
+
+.passport-dashboard__canvas-avatar {
+  position: absolute;
+  right: 22px;
+  bottom: 2px;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #b6defe;
+  color: #5f2482;
+  box-shadow: 0 8px 18px rgba(27, 6, 44, 0.16);
+}
+
+.passport-dashboard__canvas-avatar span {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
 }
 
 .passport-badge-row {
@@ -1190,6 +1275,18 @@ main {
   background: linear-gradient(180deg, #5f2482 0%, #6b2b8f 100%);
 }
 
+.passport-activity-card--blue {
+  background: linear-gradient(180deg, #5f2482 0%, #6b2b8f 100%);
+}
+
+.passport-activity-card--lilac {
+  background: linear-gradient(180deg, #6a2e90 0%, #7a39a3 100%);
+}
+
+.passport-activity-card--yellow {
+  background: linear-gradient(180deg, #62308c 0%, #73349f 100%);
+}
+
 .passport-activity-card--empty {
   background: rgba(95, 36, 130, 0.58);
   color: rgba(255, 255, 255, 0.8);
@@ -1230,6 +1327,38 @@ main {
 
 .passport-activity-icon--light {
   background: #edd6ff;
+}
+
+.passport-activity-icon--blue {
+  background: #9ed2ff;
+  color: #2d2672;
+}
+
+.passport-activity-icon--lilac {
+  background: #edd6ff;
+  color: #5f2482;
+}
+
+.passport-activity-icon--yellow {
+  background: #f8f35d;
+  color: #ff6b2b;
+}
+
+.passport-inline-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: end;
+  margin-top: 10px;
+  margin-left: auto;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .passport-progress {
@@ -1818,6 +1947,17 @@ main {
   .passport-avatar-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .passport-brandmark {
+    font-size: 3.2rem;
+    top: 34px;
+  }
+
+  .passport-id-brand {
+    top: -168px;
+    left: 18px;
+    font-size: 3.1rem;
+  }
 }
 
 @media (min-width: 901px) {
@@ -1844,5 +1984,10 @@ main {
   .passport-dashboard-layout {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
     align-items: start;
+  }
+
+  .passport-sidecard {
+    position: sticky;
+    top: 24px;
   }
 }
