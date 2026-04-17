@@ -54,6 +54,33 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="app-page !py-0">
+        <div className="app-page__container">
+          <div className="app-card app-card--soft" data-reveal>
+            <div className="app-card__content">
+              <div className="journey-grid stagger-list">
+                {[
+                  ["1", "Je decouvre", "Je consulte le programme et les associations presentes."],
+                  ["2", "Je participe", "Je cree mon passeport puis je scanne les stands pendant le festival."],
+                  ["3", "Je continue", "Je garde le lien avec Solimouv via les defis et prochains rendez-vous."],
+                ].map(([index, title, copy], idx) => (
+                  <div
+                    key={title}
+                    className="journey-step"
+                    data-reveal
+                    style={{ ["--stagger-index" as string]: idx }}
+                  >
+                    <span className="journey-step__index">{index}</span>
+                    <h2 className="journey-step__title">{title}</h2>
+                    <p className="journey-step__copy">{copy}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="curve-section">
         <div className="intro-panel">
           <div className="soli-container">

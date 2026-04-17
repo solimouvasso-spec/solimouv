@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase, PassportProfile, PassportScan } from "@/lib/supabase";
+import PageHero from "@/components/PageHero";
 
 const BADGES = [
   {
@@ -132,80 +133,95 @@ export default function PasseportPage() {
 
   /* ── Inscription ── */
   if (step === "register") return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md">
-        {/* Hero text */}
-        <div className="text-center mb-10">
-          <div className="relative inline-block mb-6">
-            <span className="text-7xl animate-float block" role="img" aria-label="Passeport">🎟</span>
-            <span className="ping-once absolute top-0 right-0 w-4 h-4 rounded-full bg-teal" aria-hidden="true" />
-          </div>
-          <h1 className="text-4xl font-extrabold mb-3">
-            <span className="text-gradient-teal">Soli&apos;Passeport</span>
-          </h1>
-          <p className="text-gray-400 text-lg leading-relaxed">
-            Scanne les stands, débloque des badges exclusifs et gagne des récompenses !
-          </p>
-        </div>
+    <div className="app-page">
+      <div className="app-page__container app-grid">
+        <PageHero
+          eyebrow="Soli&apos;Passeport"
+          title="Ton parcours commence ici"
+          description="Le flux est simple: tu crees ton passeport, tu scannes les stands, puis tu suis tes points et tes badges dans une seule interface."
+          actions={[
+            { href: "/programme", label: "Voir le programme", variant: "secondary" },
+          ]}
+        />
 
-        {/* Badges preview */}
-        <div className="flex justify-center gap-3 mb-8" aria-hidden="true">
-          {BADGES.map((b, i) => (
+        <div className="journey-grid stagger-list">
+          {[
+            ["1", "Je cree", "Je choisis un prenom ou pseudo pour lancer mon pass."],
+            ["2", "Je scanne", "Je valide les stands pendant le festival."],
+            ["3", "Je suis", "Je retrouve mes points, badges et prochaines etapes."],
+          ].map(([index, title, copy], idx) => (
             <div
-              key={b.id}
-              className="w-11 h-11 rounded-xl glass border border-gray-700/40 flex items-center justify-center opacity-30 animate-fade-up"
-              style={{ animationDelay: `${i * 80}ms` }}
+              key={title}
+              className="journey-step"
+              data-reveal
+              style={{ ["--stagger-index" as string]: idx }}
             >
-              <span className="text-xl grayscale">🔒</span>
+              <span className="journey-step__index">{index}</span>
+              <h2 className="journey-step__title">{title}</h2>
+              <p className="journey-step__copy">{copy}</p>
             </div>
           ))}
         </div>
 
-        {/* Form card */}
-        <div className="glass-card rounded-3xl p-7 animate-scale-in">
-          <form onSubmit={handleRegister} className="space-y-4" noValidate>
-            <div>
-              <label htmlFor="reg-name" className="block text-sm font-semibold text-gray-300 mb-2">
-                Ton prénom / pseudo <span className="text-accent" aria-hidden="true">*</span>
-              </label>
-              <input
-                id="reg-name"
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ex: Marie"
-                autoComplete="given-name"
-                className="w-full glass-dark border border-teal/20 rounded-2xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-all"
-              />
+        <div className="app-card app-card--soft" data-reveal>
+          <div className="app-card__content">
+            <div className="flex justify-center gap-3 mb-8" aria-hidden="true">
+              {BADGES.map((b, i) => (
+                <div
+                  key={b.id}
+                  className="w-11 h-11 rounded-xl glass border border-gray-700/40 flex items-center justify-center opacity-30 animate-fade-up"
+                  style={{ animationDelay: `${i * 80}ms` }}
+                >
+                  <span className="text-xl grayscale">🔒</span>
+                </div>
+              ))}
             </div>
-            <div>
-              <label htmlFor="reg-email" className="block text-sm font-semibold text-gray-300 mb-2">
-                Email <span className="text-gray-600 font-normal text-xs">(optionnel)</span>
-              </label>
-              <input
-                id="reg-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="pour recevoir tes résultats de fin d'année"
-                autoComplete="email"
-                className="w-full glass-dark border border-teal/20 rounded-2xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-all"
-              />
-            </div>
+
+            <form onSubmit={handleRegister} className="app-form" noValidate>
+              <div className="app-form__grid">
+                <div className="app-field">
+                  <label htmlFor="reg-name">
+                    Ton prénom / pseudo <span className="text-accent" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="reg-name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ex: Marie"
+                    autoComplete="given-name"
+                    className="app-input"
+                  />
+                </div>
+                <div className="app-field">
+                  <label htmlFor="reg-email">
+                    Email <span className="text-white/45 font-normal text-xs">(optionnel)</span>
+                  </label>
+                  <input
+                    id="reg-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="pour recevoir tes résultats"
+                    autoComplete="email"
+                    className="app-input"
+                  />
+                </div>
+              </div>
             {error && <p role="alert" className="text-accent text-sm">{error}</p>}
-            <button
-              type="submit"
-              disabled={saving || !name.trim()}
-              className="w-full py-4 rounded-full font-extrabold text-lg text-navy transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
-              style={{ background: "linear-gradient(135deg, #00C9A7, #009980)" }}
-            >
-              {saving ? "Création..." : "Créer mon passeport 🎟"}
-            </button>
-            <p className="text-gray-600 text-xs text-center">
-              Aucun mot de passe requis · Sauvegardé sur cet appareil
-            </p>
-          </form>
+              <button
+                type="submit"
+                disabled={saving || !name.trim()}
+                className="app-button app-button--primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? "Création..." : "Créer mon passeport"}
+              </button>
+              <p className="text-white/55 text-xs text-center m-0">
+                Aucun mot de passe requis · Sauvegardé sur cet appareil
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -213,7 +229,17 @@ export default function PasseportPage() {
 
   /* ── Passeport ── */
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-6">
+    <div className="app-page">
+      <div className="app-page__container app-grid">
+      <PageHero
+        eyebrow="Passeport actif"
+        title="Ton tableau de bord festival"
+        description="Tu retrouves ici tes points, tes badges, ton avancement et les raccourcis utiles pour continuer ton parcours sans te perdre."
+        actions={[
+          { href: "/scan", label: "Scanner un stand" },
+          { href: "/defis", label: "Voir les défis", variant: "secondary" },
+        ]}
+      />
 
       {/* ── Carte principale ── */}
       <header className="relative overflow-hidden rounded-3xl p-6 sm:p-8 animate-fade-up"
@@ -427,6 +453,7 @@ export default function PasseportPage() {
         >
           Changer d&apos;appareil / réinitialiser
         </button>
+      </div>
       </div>
     </div>
   );

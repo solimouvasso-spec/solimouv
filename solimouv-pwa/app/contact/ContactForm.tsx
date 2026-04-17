@@ -64,12 +64,12 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5"
+      className="app-form"
       aria-label="Formulaire de contact"
       noValidate
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div>
+      <div className="app-form__grid">
+        <div className="app-field">
           <label
             htmlFor="contact-name"
             className="block text-sm font-medium text-gray-300 mb-1.5"
@@ -86,11 +86,11 @@ export default function ContactForm() {
             required
             autoComplete="name"
             aria-required="true"
-            className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
+            className="app-input"
             placeholder="Marie Dupont"
           />
         </div>
-        <div>
+        <div className="app-field">
           <label
             htmlFor="contact-email"
             className="block text-sm font-medium text-gray-300 mb-1.5"
@@ -107,13 +107,13 @@ export default function ContactForm() {
             required
             autoComplete="email"
             aria-required="true"
-            className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
+            className="app-input"
             placeholder="marie@example.com"
           />
         </div>
       </div>
 
-      <div>
+      <div className="app-field">
         <label
           htmlFor="contact-subject"
           className="block text-sm font-medium text-gray-300 mb-1.5"
@@ -123,7 +123,7 @@ export default function ContactForm() {
         <select
           id="contact-subject"
           name="subject"
-          className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
+          className="app-select"
           aria-label="Sélectionner un sujet"
         >
           <option value="">Choisir un sujet...</option>
@@ -137,7 +137,7 @@ export default function ContactForm() {
         </select>
       </div>
 
-      <div>
+      <div className="app-field">
         <label
           htmlFor="contact-message"
           className="block text-sm font-medium text-gray-300 mb-1.5"
@@ -153,7 +153,7 @@ export default function ContactForm() {
           required
           rows={5}
           aria-required="true"
-          className="w-full bg-navy-dark border border-teal/20 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors resize-none"
+          className="app-textarea"
           placeholder="Votre message..."
         />
       </div>
@@ -167,7 +167,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full sm:w-auto px-8 py-4 bg-teal text-navy font-bold rounded-full hover:bg-teal/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="app-button app-button--primary w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Envoyer le formulaire de contact"
       >
         {status === "sending" ? "Envoi en cours..." : "Envoyer le message"}

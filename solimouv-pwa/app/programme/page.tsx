@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import PageHero from "@/components/PageHero";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -109,62 +111,88 @@ const schedule: Activity[] = [
 
 export default function ProgrammePage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-      <header className="text-center mb-12">
-        <p className="text-teal text-sm font-semibold uppercase tracking-widest mb-3">
-          Journée du 14 juin 2025
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
-          Programme
-        </h1>
-        <p className="text-gray-400 text-lg max-w-xl mx-auto">
-          Une journée riche en découvertes, émotions et rencontres. Tout est
-          gratuit et accessible.
-        </p>
-      </header>
+    <div className="app-page">
+      <div className="app-page__container app-grid">
+        <PageHero
+          eyebrow="Jour J · 14 juin 2025"
+          title="Programme du festival"
+          description="Le parcours est pense pour etre simple: tu arrives, tu reperes les temps forts, puis tu rejoins les zones qui t'interessent sans te perdre."
+          actions={[
+            { href: "/passeport", label: "Creer mon passeport" },
+            { href: "/contact", label: "Poser une question", variant: "secondary" },
+          ]}
+        />
 
-      <section aria-label="Programme de la journée">
-        <ol className="relative border-l-2 border-teal/30 space-y-0" role="list">
-          {schedule.map((activity, index) => (
-            <li key={index} className="ml-6 pb-10 last:pb-0">
-              <span
-                className="absolute -left-[9px] flex items-center justify-center w-4 h-4 bg-teal rounded-full ring-4 ring-navy"
-                aria-hidden="true"
-              />
-              <article
-                className="bg-navy-light rounded-xl p-5 border border-teal/10 hover:border-teal/30 transition-colors ml-2"
-                aria-labelledby={`activity-${index}`}
-              >
-                <div className="flex flex-wrap items-center gap-3 mb-2">
+        <section className="app-card" data-reveal aria-label="Repères rapides">
+          <div className="app-card__content">
+            <div className="app-statbar stagger-list">
+              {[
+                ["10+", "temps forts"],
+                ["100%", "accessible"],
+                ["3", "zones majeures"],
+              ].map(([value, label], index) => (
+                <div
+                  key={label}
+                  className="app-stat"
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                >
+                  <span className="app-stat__value">{value}</span>
+                  <span className="app-stat__label">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="app-card" aria-label="Programme de la journée" data-reveal>
+          <div className="app-card__content">
+            <div className="timeline stagger-list" role="list">
+              {schedule.map((activity, index) => (
+                <article
+                  key={activity.time + activity.title}
+                  className="timeline-item"
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                  aria-labelledby={`activity-${index}`}
+                >
                   <time
-                    className="text-teal font-mono font-bold text-lg"
+                    className="timeline-time"
                     dateTime={`2025-06-14T${activity.time}`}
                   >
                     {activity.time}
                   </time>
-                  <span
-                    className={`text-xs font-semibold px-2 py-0.5 rounded-full ${activity.tagColor}`}
-                  >
-                    {activity.tag}
-                  </span>
-                </div>
-                <h2
-                  id={`activity-${index}`}
-                  className="text-white font-semibold text-lg mb-1"
-                >
-                  {activity.title}
-                </h2>
-                <p className="text-gray-400 text-sm mb-2 leading-relaxed">
-                  {activity.description}
-                </p>
-                <p className="text-gray-500 text-xs">
-                  <span aria-label="Lieu">📍</span> {activity.location}
-                </p>
-              </article>
-            </li>
-          ))}
-        </ol>
-      </section>
+                  <div className="timeline-card">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <span className="app-pill">{activity.tag}</span>
+                      <span className="text-sm text-white/55">{activity.location}</span>
+                    </div>
+                    <h2 id={`activity-${index}`} className="timeline-card__title">
+                      {activity.title}
+                    </h2>
+                    <p className="timeline-card__copy">{activity.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="app-card app-card--soft" data-reveal>
+          <div className="app-card__content flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="app-hero__eyebrow">Suite du parcours</p>
+              <h2 className="text-2xl font-extrabold text-white m-0">Passe au Soli&apos;Passeport</h2>
+              <p className="app-hero__description max-w-none">
+                Une fois le programme repere, tu peux commencer a scanner les stands et garder une trace de ton aventure.
+              </p>
+            </div>
+            <Link href="/passeport" className="app-button app-button--primary">
+              Ouvrir mon pass
+            </Link>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

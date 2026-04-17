@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const ITEMS = [
-  { href: "/", label: "Accueil", icon: "◉" },
-  { href: "/programme", label: "Programme", icon: "◌" },
-  { href: "/passeport", label: "Passeport", icon: "◎" },
-  { href: "/contact", label: "Contact", icon: "◍" },
+  { href: "/", label: "Accueil", icon: "⌂" },
+  { href: "/programme", label: "Parcours", icon: "≡" },
+  { href: "/passeport", label: "Pass", icon: "◈" },
+  { href: "/contact", label: "Aide", icon: "?" },
 ];
 
 export default function BottomNav() {
