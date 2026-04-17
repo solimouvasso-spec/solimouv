@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { supabase, MonthlyChallenge, ChallengeParticipation, addPassportPoints } from "@/lib/supabase";
+import {
+  supabase,
+  MonthlyChallenge,
+  ChallengeParticipation,
+  PassportScan,
+  addPassportPoints,
+} from "@/lib/supabase";
 
 const MONTHS_FR = [
   "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -16,9 +22,92 @@ const CATEGORY_COLORS: Record<string, string> = {
   Goalball: "text-yellow-400 border-yellow-400/30 bg-yellow-400/10",
 };
 
+const SPORT_SUGGESTIONS: Record<
+  string,
+  { title: string; description: string; instructions: string; points: number }[]
+> = {
+  Boccia: [
+    {
+      title: "Precision en 12 lancers",
+      description: "Place 12 lancers de boccia et essaye de finir avec 5 boules dans la zone cible.",
+      instructions: "Prends une photo de la zone finale ou decris ton meilleur score.",
+      points: 40,
+    },
+    {
+      title: "Boccia en duo",
+      description: "Invite une autre personne a tester la boccia avec toi pendant au moins 15 minutes.",
+      instructions: "Raconte ce que vous avez appris ensemble sur le controle et la precision.",
+      points: 35,
+    },
+  ],
+  Yoga: [
+    {
+      title: "Routine souffle et mobilite",
+      description: "Realise une mini routine inclusive de 10 minutes axee respiration et mobilite.",
+      instructions: "Decris les postures ou mouvements que tu as preferes.",
+      points: 30,
+    },
+    {
+      title: "Pause bien-etre en groupe",
+      description: "Participe a un moment calme avec une association ou un proche et partage l'experience.",
+      instructions: "Explique comment tu t'es senti avant et apres la seance.",
+      points: 35,
+    },
+  ],
+  "Basket fauteuil": [
+    {
+      title: "Serie de passes inclusives",
+      description: "Realise une serie de 20 passes ou dribbles adaptes autour d'un atelier basket fauteuil.",
+      instructions: "Indique le nombre de passes reussies ou le parcours realise.",
+      points: 45,
+    },
+    {
+      title: "Match-decouverte",
+      description: "Teste une mini opposition ou un atelier de tir pour comprendre les sensations du basket fauteuil.",
+      instructions: "Raconte ce qui change le plus dans la perception du jeu.",
+      points: 50,
+    },
+  ],
+  Goalball: [
+    {
+      title: "Defi a l'ecoute",
+      description: "Teste 3 sequences de goalball les yeux bandes et concentre-toi sur le son et la coordination.",
+      instructions: "Partage comment tu t'es repere sans la vue.",
+      points: 45,
+    },
+    {
+      title: "Parcours sensoriel",
+      description: "Enchaine un atelier sensoriel et une initiation goalball pour travailler l'orientation.",
+      instructions: "Decris le moment ou tu t'es senti le plus en confiance.",
+      points: 40,
+    },
+  ],
+};
+
+type SuggestedChallenge = {
+  id: string;
+  title: string;
+  description: string;
+  sport: string;
+  instructions: string;
+  points: number;
+};
+
+function getSportPreference(scans: PassportScan[]) {
+  const counts = scans.reduce<Record<string, number>>((acc, scan) => {
+    const sport = scan.festival_stands?.sport;
+    if (!sport) return acc;
+    acc[sport] = (acc[sport] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+}
+
 export default function DefisPage() {
   const [challenges, setChallenges] = useState<MonthlyChallenge[]>([]);
   const [participations, setParticipations] = useState<ChallengeParticipation[]>([]);
+  const [scans, setScans] = useState<PassportScan[]>([]);
   const [sessionId] = useState<string | null>(() =>
     typeof window === "undefined"
       ? null
@@ -50,6 +139,12 @@ export default function DefisPage() {
         .select("*")
         .eq("session_id", sid);
       setParticipations((parts as ChallengeParticipation[]) || []);
+
+      const { data: scanRows } = await supabase
+        .from("passport_scans")
+        .select("*, festival_stands(*)")
+        .eq("session_id", sid);
+      setScans((scanRows as PassportScan[]) || []);
     }
 
     setLoading(false);
@@ -104,8 +199,22 @@ export default function DefisPage() {
   }
 
   const currentMonth = new Date().getMonth() + 1;
-  const currentChallenges = challenges.filter((c) => c.month === currentMonth);
+  const preferredSport = getSportPreference(scans);
+  const currentChallenges = challenges
+    .filter((c) => c.month === currentMonth)
+    .sort((a, b) => {
+      const aPreferred = preferredSport && a.sport === preferredSport ? 1 : 0;
+      const bPreferred = preferredSport && b.sport === preferredSport ? 1 : 0;
+      return bPreferred - aPreferred;
+    });
   const pastChallenges = challenges.filter((c) => c.month < currentMonth);
+  const suggestedChallenges: SuggestedChallenge[] = preferredSport
+    ? (SPORT_SUGGESTIONS[preferredSport] || []).map((challenge, index) => ({
+        id: `${preferredSport}-${index}`,
+        sport: preferredSport,
+        ...challenge,
+      }))
+    : [];
 
   if (loading) {
     return (
@@ -120,9 +229,10 @@ export default function DefisPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+    <div className="app-page">
+      <div className="app-page__container app-grid">
       {/* En-tête */}
-      <header className="text-center mb-12">
+      <header className="text-center mb-12" data-reveal>
         <p className="text-teal text-sm font-semibold uppercase tracking-widest mb-3">
           Toute l&apos;année
         </p>
@@ -134,6 +244,60 @@ export default function DefisPage() {
           Relève-le pour gagner des points et grimper au classement !
         </p>
       </header>
+
+      {sessionId ? (
+        <section className="app-card app-card--soft" data-reveal aria-label="Defis recommandes">
+          <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Pour toi</p>
+              <h2 className="section-title">
+                {preferredSport
+                  ? `Defis proposes autour de ${preferredSport}`
+                  : "On apprend encore tes preferences"}
+              </h2>
+              <p className="app-hero__description">
+                {preferredSport
+                  ? "On te recommande en priorite des defis proches du sport que tu explores le plus dans ton passeport."
+                  : "Scanne quelques stands ou participe a une activite pour qu'on puisse te proposer des defis plus pertinents."}
+              </p>
+            </div>
+
+            {preferredSport ? (
+              <div className="festival-activity-grid stagger-list">
+                {suggestedChallenges.map((challenge, index) => (
+                  <article
+                    key={challenge.id}
+                    className="festival-activity-card festival-activity-card--lilac"
+                    data-reveal
+                    style={{ ["--stagger-index" as string]: index }}
+                  >
+                    <span className="app-pill">{challenge.sport}</span>
+                    <h3>{challenge.title}</h3>
+                    <p>{challenge.description}</p>
+                    <p className="text-white/55 text-sm mt-3 mb-0">{challenge.instructions}</p>
+                    <div className="scan-spot-card__actions mt-4">
+                      <span className="app-button app-button--secondary">+{challenge.points} pts</span>
+                      <button
+                        type="button"
+                        className="app-button app-button--primary"
+                        onClick={() => setProofText(challenge.title)}
+                      >
+                        Ca m&apos;interesse
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 bg-white/5 rounded-3xl border border-white/10">
+                <p className="text-white/70 m-0">
+                  Commence par scanner un stand ou valider une activite pour declencher des recommandations personnalisees.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      ) : null}
 
       {/* Pas de passeport */}
       {!sessionId && (
@@ -156,7 +320,7 @@ export default function DefisPage() {
       )}
 
       {/* Défi du mois courant */}
-      <section aria-labelledby="current-heading" className="mb-10">
+      <section aria-labelledby="current-heading" className="mb-10" data-reveal>
         <h2 id="current-heading" className="text-xl font-bold text-white mb-5">
           Défi du mois —{" "}
           <span className="text-teal">{MONTHS_FR[currentMonth - 1]}</span>
@@ -167,9 +331,14 @@ export default function DefisPage() {
             <span className="text-4xl block mb-3" role="img" aria-label="Calendrier">
               📅
             </span>
-            <p className="text-gray-400">
-              Aucun défi pour ce mois. Les associations préparent le prochain !
+            <p className="text-gray-400 mb-3">
+              Aucun défi publie pour ce mois. Les associations preparent le prochain.
             </p>
+            {preferredSport ? (
+              <p className="text-white/70 text-sm m-0">
+                En attendant, on te suggere de viser plutot des activites autour de <strong>{preferredSport}</strong>.
+              </p>
+            ) : null}
           </div>
         ) : (
           <ul className="space-y-4" role="list">
@@ -287,7 +456,7 @@ export default function DefisPage() {
 
       {/* Défis passés */}
       {pastChallenges.length > 0 && (
-        <section aria-labelledby="past-heading">
+        <section aria-labelledby="past-heading" data-reveal>
           <h2 id="past-heading" className="text-xl font-bold text-white mb-4">
             Défis précédents
           </h2>
@@ -331,7 +500,7 @@ export default function DefisPage() {
       )}
 
       {/* CTA bas de page */}
-      <div className="mt-12 text-center">
+      <div className="mt-12 text-center" data-reveal>
         <p className="text-gray-400 mb-4 text-sm">
           Tu représentes une association ? Propose un défi mensuel !
         </p>
@@ -342,6 +511,7 @@ export default function DefisPage() {
         >
           Proposer un défi
         </Link>
+      </div>
       </div>
     </div>
   );
