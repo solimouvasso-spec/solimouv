@@ -20,8 +20,9 @@ export default function AppShell({
 
     const isMobileLanding =
       pathname === "/" && window.matchMedia("(max-width: 768px)").matches;
+    const isPassportRoute = pathname === "/passeport";
 
-    if (isMobileLanding) {
+    if (isMobileLanding || isPassportRoute || !("IntersectionObserver" in window)) {
       const frame = window.requestAnimationFrame(() => {
         elements.forEach((element) => element.classList.add("is-revealed"));
       });
