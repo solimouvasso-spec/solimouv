@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import PageHero from "@/components/PageHero";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +17,7 @@ type Activity = {
   description: string;
   location: string;
   tag: string;
-  tagColor: string;
+  color: "teal" | "yellow" | "lilac";
 };
 
 const schedule: Activity[] = [
@@ -26,7 +27,7 @@ const schedule: Activity[] = [
     description: "Accueil des visiteurs, mot d'ouverture par Up Sport! Paris.",
     location: "Scène principale",
     tag: "Cérémonie",
-    tagColor: "bg-teal/20 text-teal",
+    color: "teal",
   },
   {
     time: "09:30",
@@ -35,7 +36,7 @@ const schedule: Activity[] = [
       "Sport de précision accessible aux personnes en situation de handicap moteur sévère.",
     location: "Zone A",
     tag: "Sport adapté",
-    tagColor: "bg-accent/20 text-accent",
+    color: "lilac",
   },
   {
     time: "10:00",
@@ -44,7 +45,7 @@ const schedule: Activity[] = [
       "Démonstration par les champions de l'équipe de Paris. Initiation ouverte à tous.",
     location: "Terrain central",
     tag: "Démonstration",
-    tagColor: "bg-teal/20 text-teal",
+    color: "teal",
   },
   {
     time: "11:00",
@@ -53,7 +54,7 @@ const schedule: Activity[] = [
       "Séance de yoga adaptée à tous les corps et toutes les capacités.",
     location: "Zone B",
     tag: "Atelier",
-    tagColor: "bg-accent/20 text-accent",
+    color: "yellow",
   },
   {
     time: "12:00",
@@ -61,7 +62,7 @@ const schedule: Activity[] = [
     description: "Restauration sur place avec des prestataires partenaires.",
     location: "Espace détente",
     tag: "Restauration",
-    tagColor: "bg-gray-600/40 text-gray-300",
+    color: "lilac",
   },
   {
     time: "13:30",
@@ -70,7 +71,7 @@ const schedule: Activity[] = [
       "Rencontrez 30 associations parisiennes spécialisées dans le sport inclusif.",
     location: "Hall principal",
     tag: "Forum",
-    tagColor: "bg-teal/20 text-teal",
+    color: "teal",
   },
   {
     time: "14:30",
@@ -79,7 +80,7 @@ const schedule: Activity[] = [
       "Sport paralympique pour personnes déficientes visuelles — jouez les yeux bandés !",
     location: "Zone C",
     tag: "Sport adapté",
-    tagColor: "bg-accent/20 text-accent",
+    color: "yellow",
   },
   {
     time: "15:30",
@@ -88,7 +89,7 @@ const schedule: Activity[] = [
       "Débats avec des athlètes, éducateurs et experts du secteur médico-social.",
     location: "Salle conférence",
     tag: "Conférence",
-    tagColor: "bg-teal/20 text-teal",
+    color: "lilac",
   },
   {
     time: "17:00",
@@ -96,7 +97,7 @@ const schedule: Activity[] = [
     description: "Récompenses pour les associations et bénévoles de l'année.",
     location: "Scène principale",
     tag: "Cérémonie",
-    tagColor: "bg-teal/20 text-teal",
+    color: "yellow",
   },
   {
     time: "17:30",
@@ -105,7 +106,116 @@ const schedule: Activity[] = [
       "Concert de clôture par des artistes locaux. Entrée libre et accessible.",
     location: "Scène principale",
     tag: "Animation",
-    tagColor: "bg-accent/20 text-accent",
+    color: "teal",
+  },
+  {
+    time: "16:00",
+    title: "Parcours moteur en duo",
+    description:
+      "Défi coopératif pour tester coordination, confiance et inclusion en binôme.",
+    location: "Village défi",
+    tag: "Challenge",
+    color: "yellow",
+  },
+  {
+    time: "16:30",
+    title: "Rencontre athlètes & bénévoles",
+    description:
+      "Temps d'échange avec les équipes qui font vivre le festival toute l'année.",
+    location: "Agora inclusive",
+    tag: "Rencontre",
+    color: "lilac",
+  },
+];
+
+const mapZones = [
+  {
+    id: "A",
+    name: "Zone A",
+    label: "Boccia & precision",
+    description: "Premier spot a scanner si tu veux lancer ton passeport facilement.",
+    placement: { top: "14%", left: "17%" } as CSSProperties,
+    accent: "yellow",
+  },
+  {
+    id: "B",
+    name: "Zone B",
+    label: "Yoga inclusif",
+    description: "Ateliers doux et espace respiration avec QR code a l'entree.",
+    placement: { top: "24%", right: "18%" } as CSSProperties,
+    accent: "lilac",
+  },
+  {
+    id: "C",
+    name: "Zone C",
+    label: "Goalball",
+    description: "Zone paralympique immersive avec demo et scan badge.",
+    placement: { top: "52%", left: "15%" } as CSSProperties,
+    accent: "teal",
+  },
+  {
+    id: "D",
+    name: "Agora",
+    label: "Rencontres & talks",
+    description: "Tables rondes, discussions et orientation visiteurs.",
+    placement: { top: "56%", right: "16%" } as CSSProperties,
+    accent: "yellow",
+  },
+  {
+    id: "E",
+    name: "Village defi",
+    label: "Defis Solimouv",
+    description: "Le coin le plus vivant pour reclamer des badges et activer des mini-jeux.",
+    placement: { bottom: "14%", left: "38%" } as CSSProperties,
+    accent: "lilac",
+  },
+];
+
+const scanSpots = [
+  {
+    name: "Accueil festival",
+    code: "SCAN-001",
+    area: "Entree principale",
+    detail: "Ton premier QR code pour activer le pass et comprendre le parcours.",
+  },
+  {
+    name: "Stand football",
+    code: "SCAN-014",
+    area: "Terrain central",
+    detail: "Badge special + points bonus si tu completes le mini challenge.",
+  },
+  {
+    name: "Forum associations",
+    code: "SCAN-022",
+    area: "Hall principal",
+    detail: "Rencontre les associations et debloque une recompense reseau.",
+  },
+  {
+    name: "Village defi",
+    code: "SCAN-031",
+    area: "Espace engagement",
+    detail: "Le meilleur spot pour enchaîner scan, activite et defi mensuel.",
+  },
+];
+
+const festivalActivities = [
+  {
+    title: "Football inclusif",
+    copy: "Badge a reclamer sur le terrain central avec initiation libre toutes les 30 minutes.",
+    zone: "Terrain central",
+    accent: "yellow",
+  },
+  {
+    title: "Parcours duo",
+    copy: "Activite cooperative pensee pour jouer a deux et creer des echanges.",
+    zone: "Village defi",
+    accent: "lilac",
+  },
+  {
+    title: "Rencontres associations",
+    copy: "Un hub pour discuter, trouver un club et repartir avec une suite concrete.",
+    zone: "Forum",
+    accent: "teal",
   },
 ];
 
@@ -114,32 +224,129 @@ export default function ProgrammePage() {
     <div className="app-page">
       <div className="app-page__container app-grid">
         <PageHero
-          eyebrow="Jour J · 14 juin 2025"
-          title="Programme du festival"
-          description="Le parcours est pense pour etre simple: tu arrives, tu reperes les temps forts, puis tu rejoins les zones qui t'interessent sans te perdre."
+          eyebrow="Carte festival · 14 juin 2025"
+          title="Carte et activites du festival"
+          description="Tu reperes les zones, les QR codes a scanner et les temps forts en un seul ecran. L'idee: arriver, comprendre, participer sans te perdre."
           actions={[
             { href: "/passeport", label: "Creer mon passeport" },
-            { href: "/contact", label: "Poser une question", variant: "secondary" },
+            { href: "/scan", label: "Scanner un code", variant: "secondary" },
           ]}
         />
 
-        <section className="app-card" data-reveal aria-label="Repères rapides">
+        <section className="app-card map-layout-card" data-reveal aria-label="Carte du festival">
           <div className="app-card__content">
-            <div className="app-statbar stagger-list">
-              {[
-                ["10+", "temps forts"],
-                ["100%", "accessible"],
-                ["3", "zones majeures"],
-              ].map(([value, label], index) => (
-                <div
-                  key={label}
-                  className="app-stat"
+            <div className="map-layout">
+              <div className="festival-map" data-reveal>
+                <div className="festival-map__stage">Scene principale</div>
+                <div className="festival-map__path festival-map__path--one" aria-hidden="true" />
+                <div className="festival-map__path festival-map__path--two" aria-hidden="true" />
+                {mapZones.map((zone) => (
+                  <button
+                    key={zone.id}
+                    type="button"
+                    className={`map-pin map-pin--${zone.accent}`}
+                    style={zone.placement}
+                    data-reveal
+                    aria-label={`${zone.name} - ${zone.label}`}
+                  >
+                    <span className="map-pin__id">{zone.id}</span>
+                    <span className="map-pin__label">{zone.name}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="map-sidepanel">
+                <div className="app-statbar stagger-list">
+                  {[
+                    ["5", "zones a parcourir"],
+                    ["4", "spots QR"],
+                    ["12+", "activites live"],
+                  ].map(([value, label], index) => (
+                    <div
+                      key={label}
+                      className="app-stat"
+                      data-reveal
+                      style={{ ["--stagger-index" as string]: index }}
+                    >
+                      <span className="app-stat__value">{value}</span>
+                      <span className="app-stat__label">{label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="map-zone-list stagger-list">
+                  {mapZones.map((zone, index) => (
+                    <article
+                      key={zone.id}
+                      className={`map-zone-card map-zone-card--${zone.accent}`}
+                      data-reveal
+                      style={{ ["--stagger-index" as string]: index }}
+                    >
+                      <div className="map-zone-card__head">
+                        <span className="map-zone-card__badge">{zone.id}</span>
+                        <div>
+                          <h2>{zone.label}</h2>
+                          <p>{zone.name}</p>
+                        </div>
+                      </div>
+                      <p className="map-zone-card__copy">{zone.description}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="app-card app-card--soft" data-reveal aria-label="Spots de scan">
+          <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Spots QR</p>
+              <h2 className="section-title">Ou scanner pendant le festival</h2>
+            </div>
+
+            <div className="scan-spot-grid stagger-list">
+              {scanSpots.map((spot, index) => (
+                <article
+                  key={spot.code}
+                  className="scan-spot-card"
                   data-reveal
                   style={{ ["--stagger-index" as string]: index }}
                 >
-                  <span className="app-stat__value">{value}</span>
-                  <span className="app-stat__label">{label}</span>
-                </div>
+                  <div className="scan-spot-card__top">
+                    <span className="scan-spot-card__code">{spot.code}</span>
+                    <span className="app-pill">{spot.area}</span>
+                  </div>
+                  <h3>{spot.name}</h3>
+                  <p>{spot.detail}</p>
+                  <Link href="/scan" className="app-button app-button--secondary">
+                    Activer le scanner
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="app-card" aria-label="Activites du festival" data-reveal>
+          <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Temps forts</p>
+              <h2 className="section-title">Activites a ne pas manquer</h2>
+            </div>
+
+            <div className="festival-activity-grid stagger-list">
+              {festivalActivities.map((activity, index) => (
+                <article
+                  key={activity.title}
+                  className={`festival-activity-card festival-activity-card--${activity.accent}`}
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                >
+                  <span className="app-pill">{activity.zone}</span>
+                  <h3>{activity.title}</h3>
+                  <p>{activity.copy}</p>
+                </article>
               ))}
             </div>
           </div>
@@ -147,6 +354,10 @@ export default function ProgrammePage() {
 
         <section className="app-card" aria-label="Programme de la journée" data-reveal>
           <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Timeline</p>
+              <h2 className="section-title">Le programme heure par heure</h2>
+            </div>
             <div className="timeline stagger-list" role="list">
               {schedule.map((activity, index) => (
                 <article
@@ -164,7 +375,7 @@ export default function ProgrammePage() {
                   </time>
                   <div className="timeline-card">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <span className="app-pill">{activity.tag}</span>
+                      <span className={`map-chip map-chip--${activity.color}`}>{activity.tag}</span>
                       <span className="text-sm text-white/55">{activity.location}</span>
                     </div>
                     <h2 id={`activity-${index}`} className="timeline-card__title">

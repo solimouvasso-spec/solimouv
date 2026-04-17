@@ -298,6 +298,21 @@ main {
   line-height: 1.55;
 }
 
+.section-heading {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.section-title {
+  margin: 0;
+  color: var(--color-white-soft);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
 .app-pill {
   display: inline-flex;
   align-items: center;
@@ -310,6 +325,258 @@ main {
   letter-spacing: 0.06em;
   background: rgba(248, 243, 93, 0.14);
   color: var(--color-yellow);
+}
+
+.map-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.map-chip--teal {
+  background: rgba(158, 210, 255, 0.16);
+  color: #9ed2ff;
+}
+
+.map-chip--yellow {
+  background: rgba(248, 243, 93, 0.16);
+  color: var(--color-yellow);
+}
+
+.map-chip--lilac {
+  background: rgba(208, 166, 234, 0.18);
+  color: var(--color-lilac);
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.festival-map {
+  position: relative;
+  min-height: 520px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background:
+    radial-gradient(circle at 20% 18%, rgba(248, 243, 93, 0.16), transparent 18%),
+    radial-gradient(circle at 84% 32%, rgba(208, 166, 234, 0.18), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, #6c2f92 0%, #55217a 100%);
+}
+
+.festival-map::before {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border-radius: 24px;
+  border: 1px dashed rgba(255, 247, 251, 0.15);
+}
+
+.festival-map__stage {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  min-height: 54px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffe96c 0%, #f8f35d 100%);
+  color: #44175e;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: 0 14px 28px rgba(27, 6, 44, 0.2);
+}
+
+.festival-map__path {
+  position: absolute;
+  border-radius: 999px;
+  border: 14px solid rgba(255, 247, 251, 0.18);
+}
+
+.festival-map__path--one {
+  width: 72%;
+  height: 44%;
+  top: 18%;
+  left: 10%;
+}
+
+.festival-map__path--two {
+  width: 56%;
+  height: 34%;
+  bottom: 14%;
+  left: 22%;
+}
+
+.map-pin {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.map-pin__id {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 900;
+  box-shadow: 0 12px 22px rgba(27, 6, 44, 0.2);
+}
+
+.map-pin__label {
+  padding: 0 10px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 247, 251, 0.16);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.map-pin--yellow .map-pin__id {
+  background: #f8f35d;
+  color: #4b1c69;
+}
+
+.map-pin--lilac .map-pin__id {
+  background: #e2b7ff;
+  color: #4b1c69;
+}
+
+.map-pin--teal .map-pin__id {
+  background: #9ed2ff;
+  color: #214173;
+}
+
+.map-sidepanel,
+.map-zone-list,
+.scan-spot-grid,
+.festival-activity-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.map-zone-card,
+.scan-spot-card,
+.festival-activity-card {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 18px;
+}
+
+.map-zone-card__head,
+.scan-spot-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.map-zone-card__badge,
+.scan-spot-card__code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 16px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.map-zone-card h2,
+.scan-spot-card h3,
+.festival-activity-card h3 {
+  margin: 0;
+  color: var(--color-white-soft);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.map-zone-card p,
+.scan-spot-card p,
+.festival-activity-card p {
+  margin: 0;
+  color: rgba(255, 247, 251, 0.72);
+  line-height: 1.55;
+}
+
+.map-zone-card__head p {
+  color: rgba(255, 247, 251, 0.54);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.map-zone-card__copy {
+  margin-top: 10px;
+}
+
+.map-zone-card--yellow .map-zone-card__badge,
+.festival-activity-card--yellow {
+  background: linear-gradient(180deg, rgba(248, 243, 93, 0.16), rgba(255, 255, 255, 0.06));
+  color: var(--color-yellow);
+}
+
+.map-zone-card--lilac .map-zone-card__badge,
+.festival-activity-card--lilac {
+  background: linear-gradient(180deg, rgba(208, 166, 234, 0.18), rgba(255, 255, 255, 0.06));
+  color: var(--color-lilac);
+}
+
+.map-zone-card--teal .map-zone-card__badge,
+.festival-activity-card--teal {
+  background: linear-gradient(180deg, rgba(158, 210, 255, 0.18), rgba(255, 255, 255, 0.06));
+  color: #9ed2ff;
+}
+
+.scan-spot-grid,
+.festival-activity-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.scan-spot-card__code {
+  background: rgba(248, 243, 93, 0.14);
+  color: var(--color-yellow);
+  font-size: 0.95rem;
+}
+
+.scan-spot-card h3,
+.festival-activity-card h3 {
+  margin-top: 14px;
+  margin-bottom: 8px;
 }
 
 .support-grid {
@@ -1740,7 +2007,10 @@ main {
   .app-form__grid,
   .timeline-item,
   .hero-meta-grid,
-  .highlights-grid {
+  .highlights-grid,
+  .map-layout,
+  .scan-spot-grid,
+  .festival-activity-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1962,6 +2232,36 @@ main {
     top: -168px;
     left: 18px;
     font-size: 3.1rem;
+  }
+
+  .festival-map {
+    min-height: 420px;
+  }
+
+  .festival-map__stage {
+    min-width: 160px;
+    font-size: 1.05rem;
+  }
+
+  .festival-map__path--one {
+    width: 78%;
+    height: 40%;
+    left: 8%;
+  }
+
+  .festival-map__path--two {
+    width: 64%;
+    height: 28%;
+    left: 18%;
+  }
+
+  .map-pin__id {
+    width: 46px;
+    height: 46px;
+  }
+
+  .map-pin__label {
+    font-size: 0.64rem;
   }
 }
 
