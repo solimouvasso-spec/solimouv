@@ -802,17 +802,20 @@ export default function PasseportPage() {
                   />
                 </div>
               </div>
-              <div className="passport-dashboard__actions">
-                <Link href="/passeport" className="passport-link-btn">
-                  Passeport
-                </Link>
-                <Link href="/scan" className="passport-link-btn passport-link-btn--active">
-                  Scanner
-                </Link>
-                <Link href="/programme" className="passport-link-btn">
-                  Carte
-                </Link>
-              </div>
+                <div className="passport-dashboard__actions">
+                  <Link href="/passeport" className="passport-link-btn">
+                    Passeport
+                  </Link>
+                  <Link href="/scan" className="passport-link-btn passport-link-btn--active">
+                    Scanner
+                  </Link>
+                  <Link href="/programme" className="passport-link-btn">
+                    Carte
+                  </Link>
+                  <Link href="/defis" className="passport-link-btn">
+                    Defis
+                  </Link>
+                </div>
             </div>
           </div>
 
@@ -832,19 +835,22 @@ export default function PasseportPage() {
                 </div>
               </div>
 
-              <div className="passport-sidecard__grid">
-                <Link href="/passeport" className="passport-sidecard__cta">
-                  Voir le pass
-                </Link>
-                <Link href="/scan" className="passport-sidecard__cta passport-sidecard__cta--primary">
-                  Activer la camera
-                </Link>
-                <Link href="/defis" className="passport-sidecard__cta">
-                  Decouvrir les defis
-                </Link>
-                <button
-                  type="button"
-                  className="passport-sidecard__cta passport-sidecard__cta--danger"
+                <div className="passport-sidecard__grid">
+                  <Link href="/passeport" className="passport-sidecard__cta">
+                    Voir le pass
+                  </Link>
+                  <Link href="/scan" className="passport-sidecard__cta passport-sidecard__cta--primary">
+                    Activer la camera
+                  </Link>
+                  <Link href="/defis" className="passport-sidecard__cta">
+                    Decouvrir les defis
+                  </Link>
+                  <Link href="/classement" className="passport-sidecard__cta">
+                    Voir le classement
+                  </Link>
+                  <button
+                    type="button"
+                    className="passport-sidecard__cta passport-sidecard__cta--danger"
                   onClick={() => {
                     if (!profile?.session_id) return;
                     localStorage.removeItem("solimouv_session_id");

@@ -290,8 +290,8 @@ export default function DefisPage() {
                       <Link href="/passeport" className="app-button app-button--primary">
                         Voir mon pass
                       </Link>
-                      <Link href="/programme" className="app-button app-button--secondary">
-                        Explorer le parcours
+                      <Link href="/classement" className="app-button app-button--secondary">
+                        Voir le classement
                       </Link>
                     </>
                   ) : (
@@ -580,8 +580,8 @@ export default function DefisPage() {
               <Link href="/contact" className="app-button app-button--primary">
                 Proposer un defi
               </Link>
-              <Link href="/associations" className="app-button app-button--secondary">
-                Voir les associations
+              <Link href="/classement" className="app-button app-button--secondary">
+                Voir le classement
               </Link>
             </div>
           </div>
