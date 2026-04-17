@@ -18,6 +18,14 @@ function LogoMark() {
 }
 
 const SIGNUP_ROUTE = "/auth?mode=password&signup=1&redirect=/passeport";
+const HERO_PHOTOS = [
+  "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80",
+  "https://images.unsplash.com/photo-1547347298-4074fc3086f0?auto=format&fit=crop&w=900&q=80",
+];
+const FEATURE_PHOTO =
+  "https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1600&q=80";
+const RUNNER_PHOTO =
+  "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80";
 
 export default function HomePage() {
   return (
@@ -34,8 +42,12 @@ export default function HomePage() {
           <div className="hero-grid">
             <div className="hero-floaters" aria-hidden="true" data-reveal>
               <div className="sticker hero-badge-left">✺</div>
-              <div className="photo-card hero-card-left" />
-              <div className="photo-card second hero-card-right" />
+              <div className="photo-card hero-card-left">
+                <img src={HERO_PHOTOS[0]} alt="" loading="eager" />
+              </div>
+              <div className="photo-card second hero-card-right">
+                <img src={HERO_PHOTOS[1]} alt="" loading="eager" />
+              </div>
               <div className="sticker sticker-yellow hero-badge-right">❂</div>
             </div>
 
@@ -140,7 +152,9 @@ export default function HomePage() {
               une vision !
             </h2>
 
-            <div className="feature-photo" aria-hidden="true" data-reveal />
+            <div className="feature-photo" aria-hidden="true" data-reveal>
+              <img src={FEATURE_PHOTO} alt="" loading="lazy" />
+            </div>
 
             <p className="intro-copy" data-reveal>
               Ici, le sport n&apos;est pas une performance, c&apos;est un langage commun, un
@@ -174,7 +188,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="runner-photo" aria-hidden="true" data-reveal />
+        <div className="runner-photo" aria-hidden="true" data-reveal>
+          <img src={RUNNER_PHOTO} alt="" loading="lazy" />
+        </div>
       </section>
 
       <section className="impact-panel">

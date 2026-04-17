@@ -567,18 +567,12 @@ main {
   transform: rotate(-5deg);
 }
 
-.photo-card::before,
-.feature-photo::before,
-.runner-photo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, transparent 0%, rgba(12, 8, 24, 0.08) 100%),
-    radial-gradient(circle at 25% 22%, rgba(255, 214, 122, 0.9), transparent 18%),
-    radial-gradient(circle at 70% 40%, rgba(79, 194, 255, 0.9), transparent 22%),
-    radial-gradient(circle at 72% 75%, rgba(244, 95, 149, 0.72), transparent 18%),
-    linear-gradient(135deg, #1d4067 0%, #5294d8 20%, #ffb35c 46%, #5d3519 68%, #111 100%);
+.photo-card img,
+.feature-photo img,
+.runner-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .photo-card.second {
@@ -1176,16 +1170,7 @@ main {
 .feature-photo {
   min-height: 420px;
   border-radius: 0;
-}
-
-.feature-photo::before {
-  background:
-    linear-gradient(180deg, transparent 0%, rgba(27, 17, 12, 0.06) 100%),
-    radial-gradient(circle at 50% 12%, rgba(255, 255, 255, 0.95), transparent 16%),
-    radial-gradient(circle at 16% 80%, rgba(28, 56, 47, 0.95), transparent 19%),
-    radial-gradient(circle at 48% 58%, rgba(235, 210, 167, 0.95), transparent 21%),
-    radial-gradient(circle at 74% 60%, rgba(50, 31, 17, 0.9), transparent 18%),
-    linear-gradient(130deg, #0d1118 0%, #192319 23%, #a47c4b 49%, #e2c184 67%, #ffffff 100%);
+  background: #d9c8e6;
 }
 
 .intro-copy {
@@ -1263,17 +1248,7 @@ main {
 
 .runner-photo {
   min-height: 402px;
-}
-
-.runner-photo::before {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.15), transparent 40%),
-    radial-gradient(circle at 25% 28%, #f4d03f 0, #f4d03f 10%, transparent 12%),
-    radial-gradient(circle at 50% 34%, #f15ba6 0, #f15ba6 11%, transparent 13%),
-    radial-gradient(circle at 79% 29%, #ff7a1a 0, #ff7a1a 11%, transparent 13%),
-    radial-gradient(circle at 62% 48%, #74d25c 0, #74d25c 8%, transparent 10%),
-    radial-gradient(circle at 37% 50%, #1a6ff3 0, #1a6ff3 9%, transparent 11%),
-    linear-gradient(180deg, #7dc8ff 0%, #c3e4ff 38%, #5897d2 39%, #5fa548 100%);
+  background: #cfb6e2;
 }
 
 .impact-panel {

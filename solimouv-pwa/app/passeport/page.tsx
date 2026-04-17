@@ -82,7 +82,7 @@ function AvatarCard({
 export default function PasseportPage() {
   const [step, setStep] = useState<
     "loading" | "welcome" | "identity" | "avatar" | "rules" | "passport"
-  >("loading");
+  >("welcome");
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [profile, setProfile] = useState<PassportProfile | null>(null);
   const [scans, setScans] = useState<PassportScan[]>([]);
@@ -93,31 +93,43 @@ export default function PasseportPage() {
   const [error, setError] = useState<string | null>(null);
 
   async function loadPassport(sessionId: string, avatarId?: string) {
-    const { data: prof } = await supabase
-      .from("passport_profiles")
-      .select("*")
-      .eq("session_id", sessionId)
-      .single();
+    try {
+      const { data: prof, error: profileError } = await supabase
+        .from("passport_profiles")
+        .select("*")
+        .eq("session_id", sessionId)
+        .single();
 
-    if (!prof) {
+      if (profileError || !prof) {
+        localStorage.removeItem("solimouv_session_id");
+        setProfile(null);
+        setScans([]);
+        setError(null);
+        setStep("welcome");
+        return;
+      }
+
+      const { data: sc } = await supabase
+        .from("passport_scans")
+        .select("*, festival_stands(*)")
+        .eq("session_id", sessionId)
+        .order("scanned_at", { ascending: false });
+
+      setProfile(prof);
+      setEmail(prof.email ?? "");
+      setName(prof.display_name);
+      setSelectedAvatar(
+        avatarId ?? localStorage.getItem(avatarStorageKey(sessionId)) ?? AVATARS[0].id
+      );
+      setScans((sc as PassportScan[]) || []);
+      setStep("passport");
+    } catch {
+      localStorage.removeItem("solimouv_session_id");
+      setProfile(null);
+      setScans([]);
+      setError("Impossible de charger ton passeport pour le moment.");
       setStep("welcome");
-      return;
     }
-
-    const { data: sc } = await supabase
-      .from("passport_scans")
-      .select("*, festival_stands(*)")
-      .eq("session_id", sessionId)
-      .order("scanned_at", { ascending: false });
-
-    setProfile(prof);
-    setEmail(prof.email ?? "");
-    setName(prof.display_name);
-    setSelectedAvatar(
-      avatarId ?? localStorage.getItem(avatarStorageKey(sessionId)) ?? AVATARS[0].id
-    );
-    setScans((sc as PassportScan[]) || []);
-    setStep("passport");
   }
 
   useEffect(() => {
@@ -126,6 +138,8 @@ export default function PasseportPage() {
       setStep("welcome");
       return;
     }
+
+    setStep("loading");
 
     const timeoutId = window.setTimeout(() => {
       void loadPassport(sessionId);
@@ -244,6 +258,7 @@ export default function PasseportPage() {
                   Essaie de nouvelles activites aujourd&apos;hui, scanne les codes,
                   et debloque des recompenses.
                 </p>
+                {error ? <p className="passport-error">{error}</p> : null}
                 <button
                   type="button"
                   className="passport-primary-btn"
