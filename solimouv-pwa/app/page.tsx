@@ -52,6 +52,25 @@ export default function HomePage() {
             <Link href={SIGNUP_ROUTE} className="soli-cta hero-main-cta" data-reveal>
               Participer
             </Link>
+
+            <div className="hero-meta-grid stagger-list" data-reveal>
+              {[
+                ["14 Juin 2026", "Paris", "Festival inclusif"],
+                ["20+ activites", "30+ assos", "Acces libre"],
+                ["Soli&apos;Passeport", "Defis", "Parcours mobile"],
+              ].map(([line1, line2, line3], index) => (
+                <div
+                  key={index}
+                  className="hero-meta-card"
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                >
+                  <p>{line1}</p>
+                  <p>{line2}</p>
+                  <p>{line3}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -76,6 +95,33 @@ export default function HomePage() {
                     <h2 className="journey-step__title">{title}</h2>
                     <p className="journey-step__copy">{copy}</p>
                   </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="soli-highlights">
+        <div className="soli-container">
+          <div className="highlights-panel app-card app-card--soft" data-reveal>
+            <div className="app-card__content">
+              <div className="highlights-grid stagger-list">
+                {[
+                  ["Sport pour tous", "Des activites accessibles, ludiques et adaptees a tous les publics."],
+                  ["Parcours simple", "Tu comprends vite ou aller, quoi faire et quelle est la prochaine etape."],
+                  ["Experience mobile", "Le passeport et les defis prolongent l&apos;experience au-dela de l&apos;evenement."],
+                ].map(([title, copy], index) => (
+                  <article
+                    key={title}
+                    className="highlight-card"
+                    data-reveal
+                    style={{ ["--stagger-index" as string]: index }}
+                  >
+                    <span className="app-pill">Temps fort</span>
+                    <h2>{title}</h2>
+                    <p>{copy}</p>
+                  </article>
                 ))}
               </div>
             </div>

@@ -110,6 +110,7 @@ main {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
   box-shadow: 0 18px 60px rgba(27, 6, 44, 0.18);
   backdrop-filter: blur(10px);
+  will-change: transform;
 }
 
 .app-card--soft {
@@ -507,6 +508,7 @@ main {
     opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
 }
 
 [data-reveal].is-revealed {
@@ -606,6 +608,62 @@ main {
 .hero-main-cta {
   margin-top: 10px;
   min-width: 166px;
+}
+
+.hero-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: min(100%, 860px);
+  margin-top: 16px;
+}
+
+.hero-meta-card {
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hero-meta-card p {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  line-height: 1.45;
+  color: rgba(255, 247, 251, 0.84);
+}
+
+.hero-meta-card p + p {
+  margin-top: 2px;
+}
+
+.soli-highlights {
+  padding: 0 0 26px;
+}
+
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.highlight-card {
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.highlight-card h2 {
+  margin: 12px 0 8px;
+  color: var(--color-white-soft);
+  font-size: 1.08rem;
+}
+
+.highlight-card p {
+  margin: 0;
+  color: rgba(255, 247, 251, 0.72);
+  line-height: 1.55;
 }
 
 .curve-section {
@@ -857,6 +915,14 @@ main {
   box-shadow: 0 12px 40px rgba(22, 7, 36, 0.32);
 }
 
+.curve-section,
+.blue-band,
+.impact-panel,
+.footer-panel {
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
+}
+
 .bottom-nav__item {
   display: grid;
   justify-items: center;
@@ -922,6 +988,14 @@ main {
 }
 
 @media (max-width: 900px) {
+  .app-card {
+    backdrop-filter: none;
+  }
+
+  .bottom-nav {
+    backdrop-filter: none;
+  }
+
   .app-page {
     padding: 18px 0 128px;
   }
@@ -935,7 +1009,9 @@ main {
   .support-grid,
   .association-grid,
   .app-form__grid,
-  .timeline-item {
+  .timeline-item,
+  .hero-meta-grid,
+  .highlights-grid {
     grid-template-columns: 1fr;
   }
 
@@ -975,6 +1051,19 @@ main {
   .hero-subtitle {
     max-width: 300px;
     font-size: 0.7rem;
+  }
+
+  .hero-meta-grid {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .hero-meta-card {
+    padding: 12px 14px;
+  }
+
+  .hero-meta-card p {
+    font-size: 0.72rem;
   }
 
   .hero-card-left,
@@ -1090,6 +1179,10 @@ main {
 
   .impact-panel {
     padding-block: 34px;
+  }
+
+  .soli-highlights {
+    padding-bottom: 16px;
   }
 
   .footer-panel {

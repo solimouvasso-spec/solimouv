@@ -18,6 +18,17 @@ export default function AppShell({
       return;
     }
 
+    const isMobileLanding =
+      pathname === "/" && window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobileLanding) {
+      const frame = window.requestAnimationFrame(() => {
+        elements.forEach((element) => element.classList.add("is-revealed"));
+      });
+
+      return () => window.cancelAnimationFrame(frame);
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
