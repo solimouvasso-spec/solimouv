@@ -51,7 +51,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={`${geist.variable} ${barlow.variable} h-full`}>
+    <html lang="fr" className={`${geist.variable} ${barlow.variable}`}>
       <body className="min-h-full bg-[#5f2482] text-white antialiased">
         <AppShell>
           <main id="main-content" tabIndex={-1}>

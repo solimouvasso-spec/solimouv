@@ -24,12 +24,15 @@
 }
 
 html {
+  height: 100%;
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 body {
   margin: 0;
+  height: 100%;
   min-height: 100vh;
   background: var(--color-plum);
   color: var(--foreground);
@@ -40,6 +43,8 @@ body {
   overflow-y: auto;
   overscroll-behavior-y: auto;
   touch-action: pan-y;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 body::-webkit-scrollbar {
@@ -63,7 +68,7 @@ img {
 
 main {
   width: 100%;
-  min-height: 100dvh;
+  min-height: 100%;
   overflow-x: clip;
   overflow-y: visible;
 }
@@ -413,6 +418,7 @@ main {
 }
 
 .page-transition {
+  min-height: 100%;
   animation: page-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
