@@ -154,12 +154,9 @@ export default function PasseportPage() {
         .single();
 
       if (profileError || !prof) {
-        localStorage.removeItem("solimouv_session_id");
         setProfile(null);
         setScans([]);
-        setError(null);
-        setStep("welcome");
-        return;
+        return false;
       }
 
       const { data: sc } = await supabase
@@ -212,12 +209,11 @@ export default function PasseportPage() {
       );
       setScans(scanRows);
       setStep("passport");
+      return true;
     } catch {
-      localStorage.removeItem("solimouv_session_id");
       setProfile(null);
       setScans([]);
-      setError("Impossible de charger ton passeport pour le moment.");
-      setStep("welcome");
+      return false;
     }
   }
 
@@ -228,7 +224,13 @@ export default function PasseportPage() {
     }
 
     const timeoutId = window.setTimeout(() => {
-      void loadPassport(sessionId);
+      void loadPassport(sessionId).then((loaded) => {
+        if (loaded) return;
+
+        localStorage.removeItem("solimouv_session_id");
+        setError("Impossible de retrouver ton passeport pour le moment.");
+        setStep("welcome");
+      });
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
@@ -285,6 +287,7 @@ export default function PasseportPage() {
 
     setSaving(true);
     setError(null);
+    setStep("loading");
 
     const cleanEmail = email.trim().toLowerCase();
     const { data, error: loginError } = await supabase
@@ -295,6 +298,7 @@ export default function PasseportPage() {
 
     if (loginError || !data) {
       setError("Aucun passeport trouve avec cette adresse email.");
+      setStep("identity");
       setSaving(false);
       return;
     }
@@ -302,7 +306,14 @@ export default function PasseportPage() {
     localStorage.setItem("solimouv_session_id", data.session_id);
     const storedAvatar =
       localStorage.getItem(avatarStorageKey(data.session_id)) ?? AVATARS[0].id;
-    await loadPassport(data.session_id, storedAvatar);
+    const loaded = await loadPassport(data.session_id, storedAvatar);
+
+    if (!loaded) {
+      localStorage.removeItem("solimouv_session_id");
+      setError("Connexion reussie, mais le passeport n'a pas pu etre charge.");
+      setStep("identity");
+    }
+
     setSaving(false);
   }
 
@@ -310,6 +321,38 @@ export default function PasseportPage() {
   const selectedAvatarData =
     AVATARS.find((avatar) => avatar.id === selectedAvatar) ?? AVATARS[0];
   const progress = Math.min((scans.length / TOTAL_STANDS) * 100, 100);
+
+  if (step === "passport" && !profile) {
+    return (
+      <div className="app-page">
+        <div className="app-page__container">
+          <div className="passport-onboarding">
+            <div className="passport-phone-card">
+              <div className="passport-sheet">
+                <h1 className="passport-sheet__title">Passeport introuvable</h1>
+                <p className="passport-sheet__copy">
+                  La connexion a bien ete lancee, mais aucune fiche passeport n&apos;a pu etre affichee.
+                </p>
+                <p className="passport-error">
+                  {error ?? "Reessaie avec ton email ou recree ton passeport."}
+                </p>
+                <button
+                  type="button"
+                  className="passport-primary-btn"
+                  onClick={() => {
+                    setStep("identity");
+                    setMode("login");
+                  }}
+                >
+                  Revenir a la connexion
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (step === "loading") {
     return (
