@@ -21,6 +21,8 @@ type Activity = {
   color: "teal" | "yellow" | "lilac";
 };
 
+type ZoneAccent = "teal" | "yellow" | "lilac";
+
 const schedule: Activity[] = [
   {
     time: "09:00",
@@ -129,7 +131,15 @@ const schedule: Activity[] = [
   },
 ];
 
-const mapZones = [
+const mapZones: {
+  id: string;
+  name: string;
+  label: string;
+  description: string;
+  placement: CSSProperties;
+  accent: ZoneAccent;
+  scans: string[];
+}[] = [
   {
     id: "A",
     name: "Zone A",
@@ -137,6 +147,7 @@ const mapZones = [
     description: "Premier spot a scanner si tu veux lancer ton passeport facilement.",
     placement: { top: "14%", left: "17%" } as CSSProperties,
     accent: "yellow",
+    scans: ["SCAN-001"],
   },
   {
     id: "B",
@@ -145,6 +156,7 @@ const mapZones = [
     description: "Ateliers doux et espace respiration avec QR code a l'entree.",
     placement: { top: "24%", right: "18%" } as CSSProperties,
     accent: "lilac",
+    scans: [],
   },
   {
     id: "C",
@@ -153,6 +165,7 @@ const mapZones = [
     description: "Zone paralympique immersive avec demo et scan badge.",
     placement: { top: "52%", left: "15%" } as CSSProperties,
     accent: "teal",
+    scans: [],
   },
   {
     id: "D",
@@ -161,6 +174,7 @@ const mapZones = [
     description: "Tables rondes, discussions et orientation visiteurs.",
     placement: { top: "56%", right: "16%" } as CSSProperties,
     accent: "yellow",
+    scans: ["SCAN-022"],
   },
   {
     id: "E",
@@ -169,54 +183,79 @@ const mapZones = [
     description: "Le coin le plus vivant pour reclamer des badges et activer des mini-jeux.",
     placement: { bottom: "14%", left: "38%" } as CSSProperties,
     accent: "lilac",
+    scans: ["SCAN-031", "SCAN-014"],
   },
 ];
 
-const scanSpots = [
+const scanSpots: {
+  id: string;
+  name: string;
+  code: string;
+  area: string;
+  detail: string;
+  zoneId: string;
+}[] = [
   {
+    id: "spot-accueil",
     name: "Accueil festival",
     code: "SCAN-001",
     area: "Entree principale",
     detail: "Ton premier QR code pour activer le pass et comprendre le parcours.",
+    zoneId: "A",
   },
   {
+    id: "spot-football",
     name: "Stand football",
     code: "SCAN-014",
     area: "Terrain central",
     detail: "Badge special + points bonus si tu completes le mini challenge.",
+    zoneId: "E",
   },
   {
+    id: "spot-forum",
     name: "Forum associations",
     code: "SCAN-022",
     area: "Hall principal",
     detail: "Rencontre les associations et debloque une recompense reseau.",
+    zoneId: "D",
   },
   {
+    id: "spot-defi",
     name: "Village defi",
     code: "SCAN-031",
     area: "Espace engagement",
     detail: "Le meilleur spot pour enchaîner scan, activite et defi mensuel.",
+    zoneId: "E",
   },
 ];
 
-const festivalActivities = [
+const festivalActivities: {
+  title: string;
+  copy: string;
+  zone: string;
+  accent: ZoneAccent;
+  zoneId: string;
+}[] = [
   {
     title: "Football inclusif",
     copy: "Badge a reclamer sur le terrain central avec initiation libre toutes les 30 minutes.",
     zone: "Terrain central",
     accent: "yellow",
+    zoneId: "E",
   },
   {
     title: "Parcours duo",
     copy: "Activite cooperative pensee pour jouer a deux et creer des echanges.",
     zone: "Village defi",
     accent: "lilac",
+    zoneId: "E",
   },
   {
     title: "Rencontres associations",
     copy: "Un hub pour discuter, trouver un club et repartir avec une suite concrete.",
     zone: "Forum",
     accent: "teal",
+    zoneId: "D",
   },
 ];
 
