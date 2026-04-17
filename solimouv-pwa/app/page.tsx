@@ -69,7 +69,7 @@ export default function HomePage() {
               {[
                 ["14 Juin 2026", "Paris", "Festival inclusif"],
                 ["20+ activites", "30+ assos", "Acces libre"],
-                ["Soli&apos;Passeport", "Defis", "Parcours mobile"],
+                ["Soli'Passeport", "Defis", "Parcours mobile"],
               ].map(([line1, line2, line3], index) => (
                 <div
                   key={index}
@@ -122,7 +122,7 @@ export default function HomePage() {
                 {[
                   ["Sport pour tous", "Des activites accessibles, ludiques et adaptees a tous les publics."],
                   ["Parcours simple", "Tu comprends vite ou aller, quoi faire et quelle est la prochaine etape."],
-                  ["Experience mobile", "Le passeport et les defis prolongent l&apos;experience au-dela de l&apos;evenement."],
+                  ["Experience mobile", "Le passeport et les defis prolongent l'experience au-dela de l'evenement."],
                 ].map(([title, copy], index) => (
                   <article
                     key={title}
