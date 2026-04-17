@@ -361,6 +361,10 @@ main {
   align-items: start;
 }
 
+.map-layout--interactive {
+  align-items: stretch;
+}
+
 .festival-map {
   position: relative;
   min-height: 520px;
@@ -432,6 +436,7 @@ main {
   padding: 0;
   border: none;
   background: transparent;
+  transition: transform 0.18s ease, filter 0.18s ease;
 }
 
 .map-pin__id {
@@ -476,12 +481,103 @@ main {
   color: #214173;
 }
 
+.map-pin.is-active {
+  transform: scale(1.08);
+  filter: brightness(1.08);
+}
+
 .map-sidepanel,
 .map-zone-list,
 .scan-spot-grid,
 .festival-activity-grid {
   display: grid;
   gap: 14px;
+}
+
+.map-sidepanel--interactive {
+  align-content: start;
+}
+
+.map-focus-card {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 18px;
+}
+
+.map-focus-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.map-focus-card__header h3 {
+  margin: 0;
+  color: var(--color-white-soft);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.map-focus-card__header p,
+.map-focus-card__copy {
+  margin: 0;
+  color: rgba(255, 247, 251, 0.7);
+  line-height: 1.55;
+}
+
+.map-focus-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.map-focus-card__meta span {
+  min-height: 30px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 247, 251, 0.9);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.map-focus-card--yellow {
+  background: linear-gradient(180deg, rgba(248, 243, 93, 0.16), rgba(255, 255, 255, 0.06));
+}
+
+.map-focus-card--lilac {
+  background: linear-gradient(180deg, rgba(208, 166, 234, 0.18), rgba(255, 255, 255, 0.06));
+}
+
+.map-focus-card--teal {
+  background: linear-gradient(180deg, rgba(158, 210, 255, 0.18), rgba(255, 255, 255, 0.06));
+}
+
+.map-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.map-tabs button {
+  min-height: 42px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 247, 251, 0.72);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.map-tabs button.is-active {
+  background: #f8f35d;
+  color: #44175e;
 }
 
 .map-zone-card,
@@ -567,6 +663,11 @@ main {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.scan-spot-grid--stack,
+.festival-activity-grid--stack {
+  grid-template-columns: 1fr;
+}
+
 .scan-spot-card__code {
   background: rgba(248, 243, 93, 0.14);
   color: var(--color-yellow);
@@ -577,6 +678,41 @@ main {
 .festival-activity-card h3 {
   margin-top: 14px;
   margin-bottom: 8px;
+}
+
+.map-programme-list {
+  display: grid;
+  gap: 12px;
+}
+
+.map-programme-item {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.map-programme-item time {
+  color: var(--color-yellow);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 0.9;
+}
+
+.map-programme-item h3 {
+  margin: 8px 0 6px;
+  color: var(--color-white-soft);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.map-programme-item p {
+  margin: 0;
+  color: rgba(255, 247, 251, 0.72);
+  line-height: 1.5;
 }
 
 .support-grid {
@@ -2236,6 +2372,10 @@ main {
 
   .festival-map {
     min-height: 420px;
+  }
+
+  .map-tabs {
+    grid-template-columns: 1fr;
   }
 
   .festival-map__stage {

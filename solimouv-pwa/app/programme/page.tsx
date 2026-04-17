@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import PageHero from "@/components/PageHero";
+import InteractiveFestivalMap from "@/app/programme/InteractiveFestivalMap";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -233,70 +234,12 @@ export default function ProgrammePage() {
           ]}
         />
 
-        <section className="app-card map-layout-card" data-reveal aria-label="Carte du festival">
-          <div className="app-card__content">
-            <div className="map-layout">
-              <div className="festival-map" data-reveal>
-                <div className="festival-map__stage">Scene principale</div>
-                <div className="festival-map__path festival-map__path--one" aria-hidden="true" />
-                <div className="festival-map__path festival-map__path--two" aria-hidden="true" />
-                {mapZones.map((zone) => (
-                  <button
-                    key={zone.id}
-                    type="button"
-                    className={`map-pin map-pin--${zone.accent}`}
-                    style={zone.placement}
-                    data-reveal
-                    aria-label={`${zone.name} - ${zone.label}`}
-                  >
-                    <span className="map-pin__id">{zone.id}</span>
-                    <span className="map-pin__label">{zone.name}</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="map-sidepanel">
-                <div className="app-statbar stagger-list">
-                  {[
-                    ["5", "zones a parcourir"],
-                    ["4", "spots QR"],
-                    ["12+", "activites live"],
-                  ].map(([value, label], index) => (
-                    <div
-                      key={label}
-                      className="app-stat"
-                      data-reveal
-                      style={{ ["--stagger-index" as string]: index }}
-                    >
-                      <span className="app-stat__value">{value}</span>
-                      <span className="app-stat__label">{label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="map-zone-list stagger-list">
-                  {mapZones.map((zone, index) => (
-                    <article
-                      key={zone.id}
-                      className={`map-zone-card map-zone-card--${zone.accent}`}
-                      data-reveal
-                      style={{ ["--stagger-index" as string]: index }}
-                    >
-                      <div className="map-zone-card__head">
-                        <span className="map-zone-card__badge">{zone.id}</span>
-                        <div>
-                          <h2>{zone.label}</h2>
-                          <p>{zone.name}</p>
-                        </div>
-                      </div>
-                      <p className="map-zone-card__copy">{zone.description}</p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <InteractiveFestivalMap
+          zones={mapZones}
+          scanSpots={scanSpots}
+          activities={festivalActivities}
+          schedule={schedule}
+        />
 
         <section className="app-card app-card--soft" data-reveal aria-label="Spots de scan">
           <div className="app-card__content">
