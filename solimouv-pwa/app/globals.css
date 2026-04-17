@@ -666,6 +666,487 @@ main {
   line-height: 1.55;
 }
 
+.passport-onboarding {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 40px;
+}
+
+.passport-phone-card {
+  position: relative;
+  width: min(100%, 420px);
+  overflow: hidden;
+  border-radius: 30px;
+  background: #5f2482;
+  box-shadow: 0 18px 60px rgba(27, 6, 44, 0.22);
+}
+
+.passport-hero-art,
+.passport-swirl-bg,
+.passport-ribbon-bg {
+  position: relative;
+  min-height: 310px;
+  background: #5f2482;
+  overflow: hidden;
+}
+
+.passport-swirl-bg::before,
+.passport-ribbon-bg::before,
+.passport-swirl-bg::after,
+.passport-ribbon-bg::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+}
+
+.passport-swirl-bg::before,
+.passport-swirl-bg::after {
+  background: transparent;
+  border: 24px solid #c697e3;
+}
+
+.passport-swirl-bg::before {
+  width: 260px;
+  height: 260px;
+  left: -60px;
+  top: 20px;
+}
+
+.passport-swirl-bg::after {
+  width: 220px;
+  height: 220px;
+  right: -30px;
+  top: 0;
+  border-color: #ff741f;
+}
+
+.passport-ribbon-bg::before {
+  width: 280px;
+  height: 280px;
+  left: -90px;
+  top: -30px;
+  background: #f8f35d;
+}
+
+.passport-ribbon-bg::after {
+  width: 220px;
+  height: 220px;
+  right: -60px;
+  top: 0;
+  background: #ff741f;
+}
+
+.passport-sheet {
+  margin-top: -22px;
+  position: relative;
+  z-index: 1;
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  background: #fffdf9;
+  color: #2e2538;
+  padding: 22px;
+}
+
+.passport-sheet__title {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 0.94;
+  text-transform: uppercase;
+  color: #2c2434;
+}
+
+.passport-sheet__copy,
+.passport-sheet__note {
+  margin: 0 0 16px;
+  color: #5f5866;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.passport-sheet__note {
+  font-size: 0.78rem;
+}
+
+.passport-form {
+  display: grid;
+  gap: 12px;
+}
+
+.passport-input {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid rgba(46, 37, 56, 0.16);
+  background: #fff;
+  padding: 0 14px;
+  color: #2c2434;
+}
+
+.passport-error {
+  margin: 0;
+  color: #d44b63;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.passport-primary-btn,
+.passport-secondary-btn,
+.passport-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: 14px;
+  padding: 0 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.passport-primary-btn:active,
+.passport-secondary-btn:active,
+.passport-link-btn:active {
+  transform: scale(0.96);
+}
+
+.passport-primary-btn {
+  border: none;
+  background: #5f2482;
+  color: #fffdf9;
+}
+
+.passport-primary-btn--small {
+  min-height: 40px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+}
+
+.passport-secondary-btn {
+  border: 1px solid rgba(95, 36, 130, 0.16);
+  background: #f4ebfb;
+  color: #5f2482;
+}
+
+.passport-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.passport-tabs button {
+  min-height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(95, 36, 130, 0.14);
+  background: #f8f2fb;
+  color: #7b7190;
+  font-weight: 700;
+}
+
+.passport-tabs button.is-active {
+  background: #5f2482;
+  color: #fff;
+}
+
+.passport-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.passport-avatar-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.passport-avatar-card {
+  display: grid;
+  place-items: center;
+  min-height: 112px;
+  border-radius: 18px;
+  border: 3px solid transparent;
+  background: color-mix(in srgb, var(--avatar-accent) 86%, white);
+  box-shadow: 0 8px 22px rgba(27, 6, 44, 0.12);
+}
+
+.passport-avatar-card span {
+  font-size: 2.5rem;
+}
+
+.passport-avatar-card.is-active {
+  border-color: #5f2482;
+  transform: translateY(-2px);
+}
+
+.passport-goals {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.passport-goal-card {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border-radius: 16px;
+  background: #161616;
+  color: #fff;
+}
+
+.passport-goal-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.45;
+}
+
+.passport-goal-icon {
+  color: #ffb04f;
+}
+
+.passport-loader {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  border: 4px solid rgba(248, 243, 93, 0.2);
+  border-top-color: #f8f35d;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.passport-book {
+  position: relative;
+  width: 270px;
+  height: 180px;
+  border-radius: 16px;
+  margin: 0 auto;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.02) 2%, transparent 10%),
+    linear-gradient(90deg, transparent 48%, rgba(0, 0, 0, 0.12) 49%, rgba(0, 0, 0, 0.03) 52%, transparent 54%),
+    #fffdf9;
+  box-shadow: 0 12px 28px rgba(27, 6, 44, 0.16);
+}
+
+.passport-book--large {
+  width: 100%;
+  max-width: 360px;
+  height: 220px;
+}
+
+.passport-badge {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #fff7b5;
+  box-shadow: 0 8px 18px rgba(27, 6, 44, 0.14);
+  font-size: 1.4rem;
+}
+
+.passport-badge--top {
+  top: 30px;
+  left: 54px;
+  background: #cfe6ff;
+}
+
+.passport-badge--mid {
+  top: 62px;
+  right: 56px;
+  background: #edd6ff;
+}
+
+.passport-badge--bottom {
+  bottom: 28px;
+  left: 72px;
+}
+
+.passport-dashboard {
+  border-radius: 30px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #5f2482 0%, #d7a5f1 100%);
+  box-shadow: 0 18px 60px rgba(27, 6, 44, 0.24);
+}
+
+.passport-dashboard__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 20px 18px;
+  background: #5f2482;
+}
+
+.passport-dashboard__eyebrow {
+  margin: 0 0 4px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  line-height: 0.95;
+}
+
+.passport-dashboard__sub {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.passport-dashboard__score {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff7b5;
+}
+
+.passport-dashboard__score strong {
+  font-size: 1.1rem;
+}
+
+.passport-dashboard__book {
+  padding: 18px 18px 8px;
+}
+
+.passport-badge-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: -18px;
+}
+
+.passport-badge-chip {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(95, 36, 130, 0.14);
+  color: #9ca3af;
+  box-shadow: 0 8px 18px rgba(27, 6, 44, 0.1);
+}
+
+.passport-badge-chip.is-unlocked {
+  background: color-mix(in srgb, var(--badge-color) 80%, white);
+  color: #2c2434;
+}
+
+.passport-dashboard__section {
+  display: grid;
+  gap: 12px;
+  padding: 12px 18px 18px;
+}
+
+.passport-activity-card {
+  padding: 14px;
+  border-radius: 18px;
+  background: #5f2482;
+  color: #fff;
+}
+
+.passport-activity-card--main {
+  background: linear-gradient(180deg, #5f2482 0%, #6b2b8f 100%);
+}
+
+.passport-activity-card--empty {
+  background: rgba(95, 36, 130, 0.58);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.passport-activity-card__head {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.passport-activity-card__head h2 {
+  margin: 0;
+  color: #f8f35d;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.passport-activity-card__head p {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+}
+
+.passport-activity-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: #9ed2ff;
+  color: #2d2672;
+  font-size: 1.25rem;
+}
+
+.passport-activity-icon--light {
+  background: #edd6ff;
+}
+
+.passport-progress {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.passport-progress__bar {
+  height: 100%;
+  border-radius: inherit;
+  background: #d7a5f1;
+}
+
+.passport-progress__bar--yellow {
+  background: #f8f35d;
+}
+
+.passport-dashboard__footer {
+  padding: 0 18px 18px;
+}
+
+.passport-dashboard__meter {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #5f2482;
+  font-weight: 700;
+}
+
+.passport-dashboard__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.passport-link-btn {
+  min-height: 42px;
+  background: rgba(95, 36, 130, 0.12);
+  color: #5f2482;
+}
+
+.passport-link-btn--active {
+  background: #5f2482;
+  color: #fff;
+}
+
 .curve-section {
   background: var(--color-lilac-soft);
   color: var(--color-ink);
@@ -1202,5 +1683,25 @@ main {
   .footer-wordmark {
     font-size: 4.5rem;
     margin: 24px 0 18px;
+  }
+
+  .passport-phone-card {
+    width: 100%;
+  }
+
+  .passport-hero-art,
+  .passport-swirl-bg,
+  .passport-ribbon-bg {
+    min-height: 250px;
+  }
+
+  .passport-book {
+    width: 230px;
+    height: 160px;
+  }
+
+  .passport-dashboard__actions,
+  .passport-avatar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
