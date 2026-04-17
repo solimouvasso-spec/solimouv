@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   supabase,
+  ChallengeParticipation,
   PassportProfile,
   PassportScan,
 } from "@/lib/supabase";
@@ -62,6 +63,10 @@ function genSession() {
 
 function avatarStorageKey(sessionId: string) {
   return `solimouv_avatar_${sessionId}`;
+}
+
+function sumPoints<T extends { points_earned: number | null | undefined }>(items: T[]) {
+  return items.reduce((total, item) => total + (item.points_earned ?? 0), 0);
 }
 
 function AvatarCard({
@@ -163,13 +168,49 @@ export default function PasseportPage() {
         .eq("session_id", sessionId)
         .order("scanned_at", { ascending: false });
 
-      setProfile(prof);
-      setEmail(prof.email ?? "");
-      setName(prof.display_name);
+      const { data: participations } = await supabase
+        .from("challenge_participations")
+        .select("points_earned")
+        .eq("session_id", sessionId);
+
+      const scanRows = (sc as PassportScan[]) || [];
+      const participationRows =
+        (participations as Pick<ChallengeParticipation, "points_earned">[]) || [];
+      const festivalPoints = sumPoints(scanRows);
+      const challengePoints = sumPoints(participationRows);
+      const totalPoints = festivalPoints + challengePoints;
+
+      const normalizedProfile: PassportProfile = {
+        ...prof,
+        festival_points: Math.max(prof.festival_points ?? 0, festivalPoints),
+        challenge_points: Math.max(prof.challenge_points ?? 0, challengePoints),
+        total_points: Math.max(prof.total_points ?? 0, totalPoints),
+      };
+
+      const shouldSyncProfile =
+        normalizedProfile.festival_points !== (prof.festival_points ?? 0) ||
+        normalizedProfile.challenge_points !== (prof.challenge_points ?? 0) ||
+        normalizedProfile.total_points !== (prof.total_points ?? 0);
+
+      if (shouldSyncProfile) {
+        void supabase
+          .from("passport_profiles")
+          .update({
+            festival_points: normalizedProfile.festival_points,
+            challenge_points: normalizedProfile.challenge_points,
+            total_points: normalizedProfile.total_points,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("session_id", sessionId);
+      }
+
+      setProfile(normalizedProfile);
+      setEmail(normalizedProfile.email ?? "");
+      setName(normalizedProfile.display_name);
       setSelectedAvatar(
         avatarId ?? localStorage.getItem(avatarStorageKey(sessionId)) ?? AVATARS[0].id
       );
-      setScans((sc as PassportScan[]) || []);
+      setScans(scanRows);
       setStep("passport");
     } catch {
       localStorage.removeItem("solimouv_session_id");
