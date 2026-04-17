@@ -2357,6 +2357,101 @@ main {
   margin: 38px 0 28px;
 }
 
+.footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 247, 251, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 247, 251, 0.82);
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.footer-social:hover {
+  transform: translateY(-1px);
+}
+
+.footer-social__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(248, 243, 93, 0.16);
+  color: var(--color-yellow);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.footer-art {
+  position: relative;
+  height: 120px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.footer-art__ring {
+  position: absolute;
+  border-radius: 999px;
+  border: 24px solid rgba(208, 166, 234, 0.84);
+}
+
+.footer-art__ring--one {
+  width: 220px;
+  height: 220px;
+  right: 70px;
+  top: -120px;
+}
+
+.footer-art__ring--two {
+  width: 150px;
+  height: 150px;
+  left: 40px;
+  bottom: -78px;
+  border-color: rgba(255, 124, 33, 0.9);
+}
+
+.footer-art__sticker {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 16px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  box-shadow: 0 12px 24px rgba(27, 6, 44, 0.18);
+}
+
+.footer-art__sticker--yellow {
+  top: 18px;
+  right: 210px;
+  background: #f8f35d;
+  color: #4a1d64;
+  transform: rotate(-8deg);
+}
+
+.footer-art__sticker--lilac {
+  left: 200px;
+  bottom: 14px;
+  background: #d0a6ea;
+  color: #4a1d64;
+  transform: rotate(8deg);
+}
+
 .footer-rule {
   height: 1px;
   background: rgba(255, 247, 251, 0.22);
@@ -3533,6 +3628,40 @@ main {
   .footer-wordmark {
     font-size: 4.5rem;
     margin: 24px 0 18px;
+  }
+
+  .footer-socials {
+    justify-content: flex-start;
+  }
+
+  .footer-art {
+    height: 84px;
+  }
+
+  .footer-art__ring--one {
+    width: 150px;
+    height: 150px;
+    right: -26px;
+    top: -84px;
+    border-width: 18px;
+  }
+
+  .footer-art__ring--two {
+    width: 120px;
+    height: 120px;
+    left: -20px;
+    bottom: -64px;
+    border-width: 18px;
+  }
+
+  .footer-art__sticker--yellow {
+    right: 92px;
+    top: 10px;
+  }
+
+  .footer-art__sticker--lilac {
+    left: 90px;
+    bottom: 10px;
   }
 
   .passport-phone-card {
