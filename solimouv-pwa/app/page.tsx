@@ -26,6 +26,23 @@ const FEATURE_PHOTO =
   "https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1600&q=80";
 const RUNNER_PHOTO =
   "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80";
+const SOCIAL_LINKS = [
+  {
+    label: "Instagram",
+    short: "IG",
+    href: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM ?? "https://www.instagram.com/solimouv/",
+  },
+  {
+    label: "LinkedIn",
+    short: "IN",
+    href: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN ?? "https://www.linkedin.com/company/solimouv/",
+  },
+  {
+    label: "TikTok",
+    short: "TT",
+    href: process.env.NEXT_PUBLIC_SOCIAL_TIKTOK ?? "https://www.tiktok.com/@solimouv",
+  },
+];
 
 export default function HomePage() {
   return (
@@ -238,6 +255,31 @@ export default function HomePage() {
                 By subscribing you agree to our Privacy Policy
               </p>
             </div>
+          </div>
+
+          <div className="footer-socials" data-reveal aria-label="Reseaux sociaux">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noreferrer"
+                className="footer-social"
+                aria-label={social.label}
+              >
+                <span className="footer-social__icon" aria-hidden="true">
+                  {social.short}
+                </span>
+                <span>{social.label}</span>
+              </a>
+            ))}
+          </div>
+
+          <div className="footer-art" aria-hidden="true">
+            <div className="footer-art__ring footer-art__ring--one" />
+            <div className="footer-art__ring footer-art__ring--two" />
+            <div className="footer-art__sticker footer-art__sticker--yellow">SHARE</div>
+            <div className="footer-art__sticker footer-art__sticker--lilac">JOIN</div>
           </div>
 
           <div className="footer-wordmark" aria-label="Solimouv" data-reveal>

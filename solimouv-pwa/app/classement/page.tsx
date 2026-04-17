@@ -1,59 +1,66 @@
 import type { Metadata } from "next";
-import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   title: "Classement — Soli'Passeport",
-  description: "Classement annuel des participants du Soli'Passeport Solimouv'. Les 3 premiers gagnent des récompenses exceptionnelles !",
+  description:
+    "Classement annuel Solimouv' avec podium, top 10 et systeme de recompenses par classification.",
 };
 
-const PODIUM = [
+const REWARDS = [
   {
-    rank: 1,
+    rank: "1er",
     icon: "🥇",
-    label: "1ère place",
-    reward: "Adhésion annuelle offerte + Certification Solimouv' + Goodies",
-    gradient: "from-yellow-400/20 via-yellow-400/10 to-transparent",
-    border: "border-gradient-gold",
-    text: "text-gradient-gold",
-    glow: "glow-gold",
-    height: "lg:pt-0",
-    order: "lg:order-2",
-    ring: "ring-2 ring-yellow-400/30",
+    title: "Adhesion annuelle offerte",
+    description: "Certification Solimouv + goodies exclusifs",
+    accent: "yellow",
   },
   {
-    rank: 2,
+    rank: "2eme",
     icon: "🥈",
-    label: "2ème place",
-    reward: "−50% sur l'adhésion + Certification Solimouv' + Goodies",
-    gradient: "from-gray-300/15 via-gray-300/8 to-transparent",
-    border: "border-gradient-silver",
-    text: "text-gray-300",
-    glow: "",
-    height: "lg:pt-8",
-    order: "lg:order-1",
-    ring: "ring-1 ring-gray-400/20",
+    title: "-50% sur l'adhesion annuelle",
+    description: "Certification Solimouv + goodies",
+    accent: "lilac",
   },
   {
-    rank: 3,
+    rank: "3eme",
     icon: "🥉",
-    label: "3ème place",
-    reward: "−30% sur l'adhésion + Certification Solimouv' + Goodies",
-    gradient: "from-amber-600/15 via-amber-600/8 to-transparent",
-    border: "border-gradient-bronze",
-    text: "text-amber-500",
-    glow: "",
-    height: "lg:pt-16",
-    order: "lg:order-3",
-    ring: "ring-1 ring-amber-600/20",
+    title: "-30% sur l'adhesion annuelle",
+    description: "Certification Solimouv + goodies",
+    accent: "teal",
+  },
+  {
+    rank: "4eme a 10eme",
+    icon: "🎖️",
+    title: "Certification Solimouv",
+    description: "Goodies remis en fin de saison",
+    accent: "soft",
   },
 ];
 
+function rewardTextForRank(rank: number) {
+  if (rank === 1) return "Adhesion offerte + certification + goodies";
+  if (rank === 2) return "-50% adhesion + certification + goodies";
+  if (rank === 3) return "-30% adhesion + certification + goodies";
+  if (rank >= 4 && rank <= 10) return "Certification + goodies";
+  return "Participation au classement";
+}
+
+function toneForRank(rank: number) {
+  if (rank === 1) return "defis-card--yellow";
+  if (rank === 2) return "defis-card--lilac";
+  if (rank === 3) return "defis-card--teal";
+  return "defis-card--soft";
+}
+
 export default async function ClassementPage() {
+  const seasonYear = 2025;
+
   const { data: players } = await supabase
     .from("passport_profiles")
     .select("display_name, total_points, festival_points, challenge_points")
-    .eq("festival_year", 2025)
+    .eq("festival_year", seasonYear)
     .order("total_points", { ascending: false })
     .limit(10);
 
@@ -61,169 +68,238 @@ export default async function ClassementPage() {
   const rest = players?.slice(3) ?? [];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+    <div className="app-page">
+      <div className="app-page__container app-grid">
+        <section className="app-card classement-hero" data-reveal>
+          <div className="app-card__content">
+            <div className="defis-hero__layout">
+              <div className="defis-hero__copy">
+                <p className="app-hero__eyebrow">Saison {seasonYear}</p>
+                <h1 className="app-hero__title">Classement annuel</h1>
+                <p className="app-hero__description">
+                  Le classement recompense les participants les plus engages sur le festival et
+                  dans les defis mensuels tout au long de l&apos;annee.
+                </p>
 
-      {/* Header */}
-      <header className="text-center mb-14">
-        <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
-          <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" aria-hidden="true" />
-          <span className="text-yellow-400 text-xs font-semibold uppercase tracking-widest">Saison 2025</span>
-        </div>
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-white mb-4">
-          <span className="text-gradient-gold">Class</span>ement
-        </h1>
-        <p className="text-gray-400 text-lg max-w-xl mx-auto">
-          Les meilleurs Soli&apos;Athlètes de la saison. Points cumulés au
-          festival et sur les défis mensuels tout au long de l&apos;année.
-        </p>
-      </header>
-
-      {/* Podium */}
-      {top3.length > 0 ? (
-        <section aria-labelledby="podium-heading" className="mb-12">
-          <h2 id="podium-heading" className="sr-only">Top 3 — Podium</h2>
-
-          {/* Podium disposition : 2e | 1er | 3e */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-            {[1, 0, 2].map((dataIdx) => {
-              const player = top3[dataIdx];
-              const p = PODIUM[dataIdx];
-              if (!player) return (
-                <div key={p.rank} className={`${p.order} ${p.height}`}>
-                  <div className={`glass rounded-3xl p-6 text-center opacity-30 ${p.ring}`}>
-                    <span className="text-4xl block mb-2" aria-hidden="true">{p.icon}</span>
-                    <p className="text-gray-600 text-sm">{p.label}</p>
-                    <p className="text-gray-700 text-xs mt-1">Pas encore de participant</p>
-                  </div>
+                <div className="hero-meta-grid">
+                  <article className="hero-meta-card">
+                    <p>Top recompense</p>
+                    <p>Adhesion offerte</p>
+                  </article>
+                  <article className="hero-meta-card">
+                    <p>Top 3</p>
+                    <p>Certification + goodies</p>
+                  </article>
+                  <article className="hero-meta-card">
+                    <p>4 a 10</p>
+                    <p>Certification</p>
+                  </article>
                 </div>
-              );
-              return (
-                <article
-                  key={p.rank}
-                  className={`${p.order} ${p.height} relative`}
-                  aria-label={`${p.label} : ${player.display_name}`}
-                >
-                  {/* Glow pour le 1er */}
-                  {p.rank === 1 && (
-                    <div
-                      className="absolute inset-0 rounded-3xl blur-2xl opacity-15 pointer-events-none"
-                      style={{ background: "radial-gradient(circle, #F59E0B, transparent)" }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <div
-                    className={`relative rounded-3xl p-6 text-center bg-gradient-to-b ${p.gradient} ${p.border} ${p.ring} overflow-hidden`}
-                  >
-                    {p.rank === 1 && (
-                      <div
-                        className="absolute inset-0 opacity-5 pointer-events-none animate-spin-slow"
-                        style={{
-                          background: "conic-gradient(from 0deg, #F59E0B, #FCD34D, #F59E0B)",
-                          borderRadius: "inherit",
-                        }}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span className="text-5xl block mb-3 relative animate-float" role="img" aria-hidden="true">
-                      {p.icon}
-                    </span>
-                    <p className={`${p.text} text-[10px] font-bold uppercase tracking-widest mb-2`}>{p.label}</p>
-                    <p className="text-white font-extrabold text-lg mb-1 truncate">{player.display_name}</p>
-                    <p className={`${p.text} text-3xl font-extrabold mb-1`} aria-label={`${player.total_points} points`}>
-                      {player.total_points}
-                    </p>
-                    <p className="text-gray-700 text-[10px] mb-4">points</p>
-                    <div className="glass-dark rounded-xl p-2.5 mb-3 text-xs text-gray-500 space-y-0.5">
-                      <p>🎪 Festival : <span className="text-gray-400">{player.festival_points} pts</span></p>
-                      <p>🎯 Défis : <span className="text-gray-400">{player.challenge_points} pts</span></p>
-                    </div>
-                    <p className={`text-[11px] ${p.text} opacity-80 leading-relaxed font-medium`}>{p.reward}</p>
-                  </div>
-                </article>
-              );
-            })}
+
+                <div className="app-hero__actions">
+                  <Link href="/passeport" className="app-button app-button--primary">
+                    Creer mon passeport
+                  </Link>
+                  <Link href="/defis" className="app-button app-button--secondary">
+                    Voir les defis
+                  </Link>
+                </div>
+              </div>
+
+              <div className="defis-hero__art" aria-hidden="true">
+                <div className="defis-orbit defis-orbit--one" />
+                <div className="defis-orbit defis-orbit--two" />
+                <div className="defis-sticker defis-sticker--yellow">TOP 10</div>
+                <div className="defis-sticker defis-sticker--lilac">GOALS</div>
+                <div className="defis-panel">
+                  <span className="app-pill">Gain par classification</span>
+                  <strong>Chaque place compte</strong>
+                  <p>Le podium obtient les plus gros avantages, mais le top 10 repart aussi avec une vraie reconnaissance.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
-      ) : (
-        <section className="mb-12 text-center py-20 glass-card rounded-3xl border border-teal/10">
-          <span className="text-6xl block mb-5 animate-float" role="img">🏆</span>
-          <h2 className="text-2xl font-extrabold text-white mb-3">Le classement est vide</h2>
-          <p className="text-gray-500 max-w-sm mx-auto mb-6">
-            Le classement s&apos;affichera dès que des participants auront
-            scanné des stands lors du festival.
-          </p>
-          <Link
-            href="/passeport"
-            className="inline-flex items-center px-6 py-3 rounded-full font-bold text-navy text-sm transition-all hover:scale-105"
-            style={{ background: "linear-gradient(135deg, #00C9A7, #009980)" }}
-          >
-            Créer mon passeport
-          </Link>
-        </section>
-      )}
 
-      {/* 4ème – 10ème */}
-      {rest.length > 0 && (
-        <section aria-labelledby="rest-heading" className="mb-12">
-          <h2 id="rest-heading" className="text-xl font-extrabold text-white mb-4 flex items-center gap-2">
-            <span className="text-2xl" aria-hidden="true">🎖</span>
-            4ème – 10ème
-          </h2>
-          <ul className="space-y-2" role="list">
-            {rest.map((player, i) => (
-              <li
-                key={player.display_name}
-                className="group flex items-center justify-between glass rounded-2xl px-5 py-4 border border-teal/10 hover:border-teal/25 transition-all"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-600 font-mono font-bold w-7 text-center text-sm">{i + 4}</span>
-                  <p className="text-white font-semibold">{player.display_name}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-teal font-extrabold">{player.total_points} pts</p>
-                  <p className="text-gray-700 text-xs">Certification + Goodies</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        <section className="app-card app-card--soft" data-reveal aria-labelledby="rewards-heading">
+          <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Recompenses</p>
+              <h2 id="rewards-heading" className="section-title">
+                Gain par classification
+              </h2>
+              <p className="app-hero__description">
+                Voici la grille de recompenses que tu m&apos;as donnee, transformee en systeme clair dans l&apos;interface.
+              </p>
+            </div>
 
-      {/* Tableau des récompenses */}
-      <section aria-labelledby="rewards-heading" className="glass-card rounded-3xl p-6 sm:p-8 border border-teal/10">
-        <h2 id="rewards-heading" className="text-xl font-extrabold text-white mb-6 flex items-center gap-2">
-          <span aria-hidden="true">🎁</span>
-          Récompenses de fin d&apos;année
-        </h2>
-        <ul className="space-y-4" role="list">
-          {[
-            { icon: "🥇", label: "1ère place", text: "text-gradient-gold", desc: "Adhésion annuelle offerte + Certification Solimouv' + Goodies" },
-            { icon: "🥈", label: "2ème place", text: "text-gray-300",      desc: "−50% sur l'adhésion annuelle + Certification Solimouv' + Goodies" },
-            { icon: "🥉", label: "3ème place", text: "text-amber-500",     desc: "−30% sur l'adhésion annuelle + Certification Solimouv' + Goodies" },
-            { icon: "🎖", label: "4ème – 10ème", text: "text-gray-400",    desc: "Certification Solimouv' + Goodies" },
-          ].map(({ icon, label, text, desc }) => (
-            <li key={label} className="flex items-start gap-4 group">
-              <span className="text-2xl shrink-0 group-hover:scale-110 transition-transform" role="img" aria-label={label}>{icon}</span>
-              <div>
-                <p className={`${text} font-bold`}>{label}</p>
-                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+            <div className="highlights-grid stagger-list">
+              {REWARDS.map((reward, index) => (
+                <article
+                  key={reward.rank}
+                  className={`highlight-card ${reward.accent === "yellow"
+                    ? "defis-card--yellow"
+                    : reward.accent === "lilac"
+                      ? "defis-card--lilac"
+                      : reward.accent === "teal"
+                        ? "defis-card--teal"
+                        : "defis-card--soft"}`}
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                >
+                  <span className="app-pill">{reward.rank}</span>
+                  <h3>
+                    <span aria-hidden="true">{reward.icon} </span>
+                    {reward.title}
+                  </h3>
+                  <p>{reward.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {top3.length > 0 ? (
+          <section className="app-card" data-reveal aria-labelledby="podium-heading">
+            <div className="app-card__content">
+              <div className="section-heading">
+                <p className="app-hero__eyebrow">Podium</p>
+                <h2 id="podium-heading" className="section-title">
+                  Les 3 premiers de la saison
+                </h2>
               </div>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-6 pt-6 border-t border-teal/10 text-center">
-          <p className="text-gray-600 text-sm mb-4">
-            Classement calculé en décembre sur la totalité des points accumulés.
-          </p>
-          <Link
-            href="/passeport"
-            className="inline-flex items-center px-6 py-2.5 rounded-full font-bold text-navy text-sm transition-all hover:scale-105"
-            style={{ background: "linear-gradient(135deg, #00C9A7, #009980)" }}
-          >
-            🎟 Créer mon Soli&apos;Passeport
-          </Link>
-        </div>
-      </section>
+
+              <div className="highlights-grid stagger-list">
+                {[1, 0, 2].map((orderIndex, index) => {
+                  const player = top3[orderIndex];
+                  const rank = orderIndex + 1;
+
+                  if (!player) {
+                    return (
+                      <article
+                        key={`empty-${rank}`}
+                        className="highlight-card defis-card--soft"
+                        data-reveal
+                        style={{ ["--stagger-index" as string]: index }}
+                      >
+                        <span className="app-pill">{rank}e place</span>
+                        <h3>En attente</h3>
+                        <p>Cette place se debloquera des que le classement se remplit.</p>
+                      </article>
+                    );
+                  }
+
+                  return (
+                    <article
+                      key={player.display_name + rank}
+                      className={`highlight-card ${toneForRank(rank)}`}
+                      data-reveal
+                      style={{ ["--stagger-index" as string]: index }}
+                    >
+                      <span className="app-pill">{rank === 1 ? "1er" : `${rank}eme`}</span>
+                      <h3>{player.display_name}</h3>
+                      <p>{player.total_points} points</p>
+                      <p className="highlight-card__note">
+                        Festival: {player.festival_points} pts · Defis: {player.challenge_points} pts
+                      </p>
+                      <p className="highlight-card__note">{rewardTextForRank(rank)}</p>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="app-card app-card--soft" data-reveal>
+            <div className="app-card__content defis-empty">
+              <div className="defis-empty__art" aria-hidden="true">
+                <span className="defis-empty__dot defis-empty__dot--one" />
+                <span className="defis-empty__dot defis-empty__dot--two" />
+                <span className="defis-empty__icon">🏆</span>
+              </div>
+              <div>
+                <h3>Le classement est vide pour le moment</h3>
+                <p>
+                  Le top 10 s&apos;affichera des que les premiers participants auront commence a scanner
+                  des stands et relever des defis.
+                </p>
+              </div>
+              <div className="defis-empty__actions">
+                <Link href="/passeport" className="app-button app-button--primary">
+                  Creer mon passeport
+                </Link>
+                <Link href="/programme" className="app-button app-button--secondary">
+                  Voir le parcours
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {rest.length > 0 ? (
+          <section className="app-card" data-reveal aria-labelledby="top10-heading">
+            <div className="app-card__content">
+              <div className="section-heading">
+                <p className="app-hero__eyebrow">Top 10</p>
+                <h2 id="top10-heading" className="section-title">
+                  4eme a 10eme place
+                </h2>
+              </div>
+
+              <div className="timeline stagger-list">
+                {rest.map((player, index) => {
+                  const rank = index + 4;
+                  return (
+                    <article
+                      key={player.display_name + rank}
+                      className="timeline-item"
+                      data-reveal
+                      style={{ ["--stagger-index" as string]: index }}
+                    >
+                      <time className="timeline-time" dateTime={`rank-${rank}`}>
+                        {rank}
+                      </time>
+                      <div className="timeline-card">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <span className="app-pill">Top 10</span>
+                          <span className="map-chip map-chip--lilac">Certification + goodies</span>
+                        </div>
+                        <h3 className="timeline-card__title">{player.display_name}</h3>
+                        <p className="timeline-card__copy">
+                          {player.total_points} points cumules sur l&apos;annee.
+                        </p>
+                        <p className="highlight-card__note">
+                          Festival: {player.festival_points} pts · Defis: {player.challenge_points} pts
+                        </p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="app-card app-card--soft" data-reveal>
+          <div className="app-card__content defis-cta">
+            <div>
+              <p className="app-hero__eyebrow mb-2">Comment gagner</p>
+              <h2 className="section-title">Cumule tes points toute l&apos;annee</h2>
+              <p className="app-hero__description max-w-none">
+                Le classement prend en compte les points festival et les points de defis. Plus tu avances dans le parcours, plus tu montes.
+              </p>
+            </div>
+            <div className="defis-cta__actions">
+              <Link href="/scan" className="app-button app-button--primary">
+                Scanner un stand
+              </Link>
+              <Link href="/defis" className="app-button app-button--secondary">
+                Relever un defi
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
