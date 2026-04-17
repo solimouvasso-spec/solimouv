@@ -9,11 +9,6 @@ import {
   PassportScan,
 } from "@/lib/supabase";
 
-const PASSPORT_PHOTO =
-  "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1600&q=80";
-const PASSPORT_PHOTO_ALT =
-  "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=1600&q=80";
-
 const BADGES = [
   {
     id: "first-scan",
@@ -126,12 +121,10 @@ function DesktopAside({
   title,
   subtitle,
   bullets,
-  photo,
 }: {
   title: string;
   subtitle: string;
   bullets: string[];
-  photo: string;
 }) {
   return (
     <aside className="passport-aside" aria-hidden="true" data-reveal>
@@ -152,7 +145,16 @@ function DesktopAside({
         </div>
 
         <div className="passport-aside__photo">
-          <img src={photo} alt="" loading="lazy" />
+          <div className="passport-aside__art" aria-hidden="true">
+            <div className="passport-aside__ring passport-aside__ring--one" />
+            <div className="passport-aside__ring passport-aside__ring--two" />
+            <div className="passport-aside__sticker passport-aside__sticker--yellow">PASS</div>
+            <div className="passport-aside__sticker passport-aside__sticker--lilac">MOVE</div>
+            <div className="passport-aside__mini-panel">
+              <span className="app-pill">Soli&apos;Pass</span>
+              <strong>Desktop</strong>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
@@ -431,7 +433,6 @@ export default function PasseportPage() {
                 "Un style carte mobile tres proche des maquettes.",
                 "Un dashboard lisible tout de suite apres connexion.",
               ]}
-              photo={PASSPORT_PHOTO}
             />
 
             <div className="passport-onboarding">
@@ -503,7 +504,6 @@ export default function PasseportPage() {
                 "Le formulaire reste tres mobile-first.",
                 "Desktop et mobile gardent la meme hierarchie visuelle.",
               ]}
-              photo={PASSPORT_PHOTO_ALT}
             />
 
             <div className="passport-onboarding">
@@ -615,7 +615,6 @@ export default function PasseportPage() {
                 "Tuiles colorees et contraste fort.",
                 "Meme rendu produit sur mobile et desktop.",
               ]}
-              photo={PASSPORT_PHOTO}
             />
 
             <div className="passport-onboarding">
@@ -669,7 +668,6 @@ export default function PasseportPage() {
                 "Les regles restent courtes et actionnables.",
                 "Apres validation, on arrive sur le home passeport.",
               ]}
-              photo={PASSPORT_PHOTO_ALT}
             />
 
             <div className="passport-onboarding">
@@ -827,7 +825,11 @@ export default function PasseportPage() {
               </p>
 
               <div className="passport-sidecard__photo">
-                <img src={PASSPORT_PHOTO} alt="" loading="lazy" />
+                <div className="passport-sidecard__art" aria-hidden="true">
+                  <div className="passport-aside__ring passport-aside__ring--one" />
+                  <div className="passport-aside__ring passport-aside__ring--two" />
+                  <div className="passport-aside__sticker passport-aside__sticker--yellow">GO</div>
+                </div>
               </div>
 
               <div className="passport-sidecard__grid">
