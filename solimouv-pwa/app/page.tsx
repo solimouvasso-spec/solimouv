@@ -87,11 +87,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="app-page !py-0">
-        <div className="app-page__container">
-          <div className="app-card app-card--soft" data-reveal>
-            <div className="app-card__content">
-              <div className="journey-grid stagger-list">
+        <section className="journey-section">
+          <div className="app-page__container">
+            <div className="app-card app-card--soft" data-reveal>
+              <div className="app-card__content">
+                <div className="journey-grid stagger-list">
                 {[
                   ["1", "Je decouvre", "Je consulte le programme et les associations presentes."],
                   ["2", "Je participe", "Je cree mon passeport puis je scanne les stands pendant le festival."],
@@ -106,13 +106,28 @@ export default function HomePage() {
                     <span className="journey-step__index">{index}</span>
                     <h2 className="journey-step__title">{title}</h2>
                     <p className="journey-step__copy">{copy}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="journey-art" aria-hidden="true">
+                  <div className="journey-art__ring journey-art__ring--one" />
+                  <div className="journey-art__ring journey-art__ring--two" />
+                  <div className="journey-art__sticker journey-art__sticker--yellow">SCAN</div>
+                  <div className="journey-art__sticker journey-art__sticker--lilac">MOVE</div>
+                  <div className="journey-art__panel">
+                    <span className="app-pill">Parcours Solimouv</span>
+                    <strong>De la decouverte au pass</strong>
+                    <p>
+                      Programme, passeport, scan et defis: tout se suit dans une experience
+                      simple et mobile.
+                    </p>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       <section className="soli-highlights">
         <div className="soli-container">

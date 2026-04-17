@@ -205,6 +205,10 @@ main {
   gap: 14px;
 }
 
+.journey-section {
+  padding: 0 0 24px;
+}
+
 .journey-step {
   position: relative;
   overflow: hidden;
@@ -239,6 +243,99 @@ main {
   color: rgba(255, 247, 251, 0.72);
   line-height: 1.5;
   font-size: 0.92rem;
+}
+
+.journey-art {
+  position: relative;
+  min-height: 260px;
+  margin-top: 18px;
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(248, 243, 93, 0.14), transparent 24%),
+    linear-gradient(180deg, rgba(113, 57, 156, 0.7), rgba(95, 36, 130, 0.94));
+}
+
+.journey-art__ring {
+  position: absolute;
+  border-radius: 999px;
+  border: 36px solid rgba(208, 166, 234, 0.92);
+}
+
+.journey-art__ring--one {
+  width: 340px;
+  height: 340px;
+  left: -110px;
+  bottom: -170px;
+}
+
+.journey-art__ring--two {
+  width: 260px;
+  height: 260px;
+  right: -70px;
+  top: -90px;
+  border-color: rgba(255, 124, 33, 0.92);
+}
+
+.journey-art__sticker {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: 18px;
+  box-shadow: 0 16px 30px rgba(27, 6, 44, 0.2);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.journey-art__sticker--yellow {
+  top: 26px;
+  left: 28px;
+  background: #f8f35d;
+  color: #4a1d64;
+  transform: rotate(-9deg);
+}
+
+.journey-art__sticker--lilac {
+  right: 30px;
+  bottom: 28px;
+  background: #d0a6ea;
+  color: #4a1d64;
+  transform: rotate(8deg);
+}
+
+.journey-art__panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100% - 48px, 540px);
+  transform: translate(-50%, -50%);
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 36px rgba(27, 6, 44, 0.22);
+}
+
+.journey-art__panel strong {
+  display: block;
+  margin-top: 10px;
+  color: #341348;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.journey-art__panel p {
+  margin: 10px 0 0;
+  color: #624d70;
+  line-height: 1.6;
 }
 
 .app-statbar {
@@ -3117,6 +3214,36 @@ main {
   .scan-spot-grid,
   .festival-activity-grid {
     grid-template-columns: 1fr;
+  }
+
+  .journey-art {
+    min-height: 220px;
+  }
+
+  .journey-art__ring--one {
+    width: 220px;
+    height: 220px;
+    left: -72px;
+    bottom: -110px;
+    border-width: 28px;
+  }
+
+  .journey-art__ring--two {
+    width: 180px;
+    height: 180px;
+    right: -56px;
+    top: -56px;
+    border-width: 24px;
+  }
+
+  .journey-art__panel {
+    left: 18px;
+    right: 18px;
+    top: auto;
+    bottom: 18px;
+    width: auto;
+    transform: none;
+    padding: 18px;
   }
 
   .real-map-card__toolbar {
