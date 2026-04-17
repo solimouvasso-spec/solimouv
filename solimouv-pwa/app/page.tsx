@@ -17,6 +17,8 @@ function LogoMark() {
   );
 }
 
+const SIGNUP_ROUTE = "/auth?mode=password&signup=1&redirect=/passeport";
+
 export default function HomePage() {
   return (
     <div className="soli-page">
@@ -24,8 +26,8 @@ export default function HomePage() {
         <div className="soli-container">
           <header className="soli-topbar" data-reveal>
             <LogoMark />
-            <Link href="#subscribe" className="soli-cta">
-              Voir l&apos;app
+            <Link href={SIGNUP_ROUTE} className="soli-cta">
+              Participer
             </Link>
           </header>
 
@@ -47,8 +49,8 @@ export default function HomePage() {
               Solimouv festival chaque experience ouvre de nouveaux possible
             </p>
 
-            <Link href="#subscribe" className="soli-cta hero-main-cta" data-reveal>
-              Je m&apos;inscris
+            <Link href={SIGNUP_ROUTE} className="soli-cta hero-main-cta" data-reveal>
+              Participer
             </Link>
           </div>
         </div>
@@ -117,7 +119,7 @@ export default function HomePage() {
             l&apos;annee a travers des defis, des rencontres et des engagements sportifs.
           </p>
 
-          <Link href="#subscribe" className="soli-cta skills-button" data-reveal>
+          <Link href="/defis" className="soli-cta skills-button" data-reveal>
             Soli&apos;Skills
           </Link>
 
@@ -152,9 +154,9 @@ export default function HomePage() {
                 type="email"
                 placeholder="soli.mouv@solimouv.com"
               />
-              <button className="soli-cta subscribe-button" type="button">
-                Subscribe
-              </button>
+              <Link href={SIGNUP_ROUTE} className="soli-cta subscribe-button">
+                Participer
+              </Link>
               <p className="subscribe-note">
                 By subscribing you agree to our Privacy Policy
               </p>

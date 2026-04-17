@@ -37,7 +37,9 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
   overflow-x: hidden;
-  overscroll-behavior-y: none;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
+  touch-action: pan-y;
 }
 
 body::-webkit-scrollbar {
@@ -63,6 +65,7 @@ main {
   width: 100%;
   min-height: 100dvh;
   overflow-x: clip;
+  overflow-y: visible;
 }
 
 :focus-visible {
@@ -914,7 +917,7 @@ main {
 
 @media (max-width: 900px) {
   .app-page {
-    padding: 18px 0 108px;
+    padding: 18px 0 128px;
   }
 
   .app-page__container {

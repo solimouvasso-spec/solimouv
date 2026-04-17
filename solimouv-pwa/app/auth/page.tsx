@@ -15,10 +15,14 @@ function AuthContent() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/admin";
   const urlError = searchParams.get("error");
+  const signupParam = searchParams.get("signup");
+  const modeParam = searchParams.get("mode");
 
-  const [mode, setMode] = useState<AuthMode>("magic");
+  const [mode, setMode] = useState<AuthMode>(
+    modeParam === "password" ? "password" : "magic"
+  );
   const [step, setStep] = useState<AuthStep>("form");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(signupParam === "1");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(
