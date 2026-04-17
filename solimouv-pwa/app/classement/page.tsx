@@ -39,6 +39,37 @@ const REWARDS = [
   },
 ];
 
+const POINT_CLASSES = [
+  {
+    range: "0 - 99 pts",
+    title: "Explorateur",
+    description: "Tu decouvres le festival, les stands et les premieres activites inclusives.",
+    perks: "Acces au parcours + progression visible dans le pass",
+    accent: "soft",
+  },
+  {
+    range: "100 - 249 pts",
+    title: "Engage",
+    description: "Tu participes activement, tu scans plusieurs stands et tu commences a relever des defis.",
+    perks: "Mise en avant dans le classement + badge de progression",
+    accent: "lilac",
+  },
+  {
+    range: "250 - 499 pts",
+    title: "Ambassadeur",
+    description: "Tu fais vivre l'experience Solimouv dans la duree et tu restes present sur plusieurs temps forts.",
+    perks: "Priorite symbolique sur les recompenses intermediaires + certificat de parcours",
+    accent: "teal",
+  },
+  {
+    range: "500+ pts",
+    title: "Soli'Athlete",
+    description: "Tu fais partie des profils les plus investis de la saison et tu vis pleinement l'ecosysteme Solimouv.",
+    perks: "Eligible aux plus fortes recompenses annuelles selon ton rang final",
+    accent: "yellow",
+  },
+];
+
 function rewardTextForRank(rank: number) {
   if (rank === 1) return "Adhesion offerte + certification + goodies";
   if (rank === 2) return "-50% adhesion + certification + goodies";
@@ -153,6 +184,43 @@ export default async function ClassementPage() {
                     {reward.title}
                   </h3>
                   <p>{reward.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="app-card" data-reveal aria-labelledby="points-heading">
+          <div className="app-card__content">
+            <div className="section-heading">
+              <p className="app-hero__eyebrow">Classification des points</p>
+              <h2 id="points-heading" className="section-title">
+                Les paliers de progression
+              </h2>
+              <p className="app-hero__description">
+                En plus du classement annuel, les points permettent aussi de situer ton niveau
+                d&apos;engagement dans l&apos;experience Solimouv.
+              </p>
+            </div>
+
+            <div className="highlights-grid stagger-list">
+              {POINT_CLASSES.map((tier, index) => (
+                <article
+                  key={tier.range}
+                  className={`highlight-card ${tier.accent === "yellow"
+                    ? "defis-card--yellow"
+                    : tier.accent === "lilac"
+                      ? "defis-card--lilac"
+                      : tier.accent === "teal"
+                        ? "defis-card--teal"
+                        : "defis-card--soft"}`}
+                  data-reveal
+                  style={{ ["--stagger-index" as string]: index }}
+                >
+                  <span className="app-pill">{tier.range}</span>
+                  <h3>{tier.title}</h3>
+                  <p>{tier.description}</p>
+                  <p className="highlight-card__note">{tier.perks}</p>
                 </article>
               ))}
             </div>
