@@ -3215,6 +3215,181 @@ main {
   background: rgba(255, 255, 255, 0.05);
 }
 
+.classement-page {
+  background:
+    radial-gradient(circle at top left, rgba(248, 243, 93, 0.08), transparent 24%),
+    radial-gradient(circle at top right, rgba(208, 166, 234, 0.14), transparent 28%),
+    linear-gradient(180deg, #5f2482 0%, #4e1f74 100%);
+}
+
+.classement-hero {
+  overflow: hidden;
+}
+
+.classement-hero__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.classement-hero__copy {
+  display: grid;
+  gap: 18px;
+}
+
+.classement-hero__art {
+  position: relative;
+  min-height: 380px;
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 247, 251, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(248, 243, 93, 0.16), transparent 26%),
+    linear-gradient(180deg, rgba(106, 49, 151, 0.88), rgba(84, 31, 128, 0.96));
+}
+
+.classement-orbit {
+  position: absolute;
+  border-radius: 999px;
+  border: 34px solid rgba(208, 166, 234, 0.88);
+}
+
+.classement-orbit--one {
+  width: 310px;
+  height: 310px;
+  top: -94px;
+  right: -76px;
+}
+
+.classement-orbit--two {
+  width: 240px;
+  height: 240px;
+  left: -64px;
+  bottom: -86px;
+  border-color: rgba(255, 124, 33, 0.92);
+}
+
+.classement-sticker {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  min-height: 54px;
+  padding: 0 16px;
+  border-radius: 18px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  box-shadow: 0 14px 28px rgba(27, 6, 44, 0.2);
+}
+
+.classement-sticker--yellow {
+  top: 28px;
+  left: 28px;
+  background: #f8f35d;
+  color: #4b1d67;
+  transform: rotate(-8deg);
+}
+
+.classement-sticker--lilac {
+  right: 28px;
+  top: 108px;
+  background: #d0a6ea;
+  color: #4b1d67;
+  transform: rotate(8deg);
+}
+
+.classement-stats-card {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  top: 116px;
+  padding: 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 247, 251, 0.12);
+}
+
+.classement-stats-card strong {
+  display: block;
+  margin-top: 10px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.classement-stats-card p {
+  margin: 10px 0 0;
+  color: rgba(255, 247, 251, 0.74);
+  line-height: 1.6;
+}
+
+.classement-crowns {
+  position: absolute;
+  right: 28px;
+  bottom: 130px;
+  display: flex;
+  gap: 10px;
+  color: var(--color-yellow);
+  font-size: 1.4rem;
+}
+
+.classement-panel {
+  bottom: 24px;
+}
+
+.classement-rewards-grid,
+.classement-points-grid,
+.classement-podium {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.classement-reward-card,
+.classement-points-card,
+.classement-podium-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.classement-reward-card__icon,
+.classement-podium-card__medal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 1.6rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.classement-podium {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.classement-podium-card--1 {
+  transform: translateY(-12px);
+}
+
+.classement-podium-card--2,
+.classement-podium-card--3 {
+  transform: translateY(18px);
+}
+
+.classement-rank-row {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.04);
+}
+
 .defis-status {
   margin-top: 16px;
   display: flex;
@@ -3300,6 +3475,7 @@ main {
   .support-grid,
   .association-grid,
   .defis-hero__layout,
+  .classement-hero__layout,
   .app-form__grid,
   .timeline-item,
   .hero-meta-grid,
@@ -3441,6 +3617,40 @@ main {
 
   .defis-hero__art {
     min-height: 300px;
+  }
+
+  .classement-hero__art {
+    min-height: 320px;
+  }
+
+  .classement-stats-card {
+    left: 18px;
+    right: 18px;
+    top: 96px;
+    padding: 18px;
+  }
+
+  .classement-crowns {
+    right: 18px;
+    bottom: 118px;
+  }
+
+  .classement-panel {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .classement-rewards-grid,
+  .classement-points-grid,
+  .classement-podium {
+    grid-template-columns: 1fr;
+  }
+
+  .classement-podium-card--1,
+  .classement-podium-card--2,
+  .classement-podium-card--3 {
+    transform: none;
   }
 
   .defis-panel {

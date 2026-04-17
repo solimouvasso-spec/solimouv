@@ -99,12 +99,12 @@ export default async function ClassementPage() {
   const rest = players?.slice(3) ?? [];
 
   return (
-    <div className="app-page">
+    <div className="app-page classement-page">
       <div className="app-page__container app-grid">
         <section className="app-card classement-hero" data-reveal>
           <div className="app-card__content">
-            <div className="defis-hero__layout">
-              <div className="defis-hero__copy">
+            <div className="classement-hero__layout">
+              <div className="classement-hero__copy">
                 <p className="app-hero__eyebrow">Saison {seasonYear}</p>
                 <h1 className="app-hero__title">Classement annuel</h1>
                 <p className="app-hero__description">
@@ -137,12 +137,22 @@ export default async function ClassementPage() {
                 </div>
               </div>
 
-              <div className="defis-hero__art" aria-hidden="true">
-                <div className="defis-orbit defis-orbit--one" />
-                <div className="defis-orbit defis-orbit--two" />
-                <div className="defis-sticker defis-sticker--yellow">TOP 10</div>
-                <div className="defis-sticker defis-sticker--lilac">GOALS</div>
-                <div className="defis-panel">
+              <div className="classement-hero__art" aria-hidden="true">
+                <div className="classement-orbit classement-orbit--one" />
+                <div className="classement-orbit classement-orbit--two" />
+                <div className="classement-sticker classement-sticker--yellow">TOP 10</div>
+                <div className="classement-sticker classement-sticker--lilac">REWARDS</div>
+                <div className="classement-stats-card">
+                  <span className="app-pill">Objectif saison</span>
+                  <strong>Monter dans le top</strong>
+                  <p>Festival + defis = points cumules. Chaque scan et chaque participation compte.</p>
+                </div>
+                <div className="classement-crowns">
+                  <span>✦</span>
+                  <span>✺</span>
+                  <span>✦</span>
+                </div>
+                <div className="defis-panel classement-panel">
                   <span className="app-pill">Gain par classification</span>
                   <strong>Chaque place compte</strong>
                   <p>Le podium obtient les plus gros avantages, mais le top 10 repart aussi avec une vraie reconnaissance.</p>
@@ -164,11 +174,11 @@ export default async function ClassementPage() {
               </p>
             </div>
 
-            <div className="highlights-grid stagger-list">
+            <div className="classement-rewards-grid stagger-list">
               {REWARDS.map((reward, index) => (
                 <article
                   key={reward.rank}
-                  className={`highlight-card ${reward.accent === "yellow"
+                  className={`highlight-card classement-reward-card ${reward.accent === "yellow"
                     ? "defis-card--yellow"
                     : reward.accent === "lilac"
                       ? "defis-card--lilac"
@@ -179,8 +189,8 @@ export default async function ClassementPage() {
                   style={{ ["--stagger-index" as string]: index }}
                 >
                   <span className="app-pill">{reward.rank}</span>
+                  <div className="classement-reward-card__icon" aria-hidden="true">{reward.icon}</div>
                   <h3>
-                    <span aria-hidden="true">{reward.icon} </span>
                     {reward.title}
                   </h3>
                   <p>{reward.description}</p>
@@ -203,11 +213,11 @@ export default async function ClassementPage() {
               </p>
             </div>
 
-            <div className="highlights-grid stagger-list">
+            <div className="classement-points-grid stagger-list">
               {POINT_CLASSES.map((tier, index) => (
                 <article
                   key={tier.range}
-                  className={`highlight-card ${tier.accent === "yellow"
+                  className={`highlight-card classement-points-card ${tier.accent === "yellow"
                     ? "defis-card--yellow"
                     : tier.accent === "lilac"
                       ? "defis-card--lilac"
@@ -237,7 +247,7 @@ export default async function ClassementPage() {
                 </h2>
               </div>
 
-              <div className="highlights-grid stagger-list">
+              <div className="classement-podium stagger-list">
                 {[1, 0, 2].map((orderIndex, index) => {
                   const player = top3[orderIndex];
                   const rank = orderIndex + 1;
@@ -246,7 +256,7 @@ export default async function ClassementPage() {
                     return (
                       <article
                         key={`empty-${rank}`}
-                        className="highlight-card defis-card--soft"
+                        className="highlight-card classement-podium-card defis-card--soft"
                         data-reveal
                         style={{ ["--stagger-index" as string]: index }}
                       >
@@ -260,11 +270,14 @@ export default async function ClassementPage() {
                   return (
                     <article
                       key={player.display_name + rank}
-                      className={`highlight-card ${toneForRank(rank)}`}
+                      className={`highlight-card classement-podium-card classement-podium-card--${rank} ${toneForRank(rank)}`}
                       data-reveal
                       style={{ ["--stagger-index" as string]: index }}
                     >
                       <span className="app-pill">{rank === 1 ? "1er" : `${rank}eme`}</span>
+                      <div className="classement-podium-card__medal" aria-hidden="true">
+                        {rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉"}
+                      </div>
                       <h3>{player.display_name}</h3>
                       <p>{player.total_points} points</p>
                       <p className="highlight-card__note">
@@ -320,7 +333,7 @@ export default async function ClassementPage() {
                   return (
                     <article
                       key={player.display_name + rank}
-                      className="timeline-item"
+                      className="timeline-item classement-rank-row"
                       data-reveal
                       style={{ ["--stagger-index" as string]: index }}
                     >
